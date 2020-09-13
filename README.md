@@ -1,2 +1,2 @@
 # CART253
-Coursework for Pippin Barr's course CART253 (concordia)
+CART253 - Creative Computation I
