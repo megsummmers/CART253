@@ -9,7 +9,16 @@ Here is a description of this template p5 project.
 //
 // Description of setup() goes here.
 function setup() {
-  background(255,0,0);//RGB for colour red
+  createCanvas(500, 500);
+
+  background(200, 200, 200); //sets background colour to RGB of numbers
+
+  point(250,250); //draws a point on the specified coordinates (100x100 grid)
+
+  rectMode(CENTER);
+  rect(250,250,250,200);
+
+
 }
 
 // draw()
