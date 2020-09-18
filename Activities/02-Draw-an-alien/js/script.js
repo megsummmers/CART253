@@ -11,17 +11,23 @@ This code will draw an alien and it's spaceship using different shapes and colou
 function setup() {
   //creates canvas with background colour
   createCanvas(640, 480);
-  background(255, 173, 224); //pink
+  background(38, 83, 150); //dark blue
+  fill(64, 43, 99);
+  rect(200, 200, 400, 400);
+  fill(0, 0, 0);
+  rect(0, 400, 650, 650);
+  ellipse(0, 400, 100, 100);
+  ellipse(600, 400, 300, 300);
 
   //spaceship
   strokeWeight(5);
   stroke(175, 175, 175);
   fill(200, 200, 200);//grey
   ellipse(155, 175, 200, 200);
-  //pink rectangle + yellow beam
+  //background rectangle + yellow beam
   noStroke();
-  fill(255, 173, 224);//pink sqaure to hid lower half of the ellipse
-  rect(0, 202, 250, 250);
+  fill(38, 83, 150);//pink sqaure to hid lower half of the ellipse
+  rect(20, 202, 250, 75);
   fill(255, 246, 82);//yellow beam
   triangle(150, 175, 50, 650, 250, 650);
   //grey UFO rectangle + yellow lights on ship
@@ -55,8 +61,8 @@ function setup() {
   ellipse(380, 285, 5, 15);//right nostril
   triangle(350, 315, 390, 315, 370, 365);//mouth
   strokeWeight(3);
-  line(385, 210, 450, 175);//right eyebrow
-  line(300, 180, 355, 210);//left eyebrow
+  //line(385, 210, 450, 175);//right eyebrow
+  //line(300, 180, 355, 210);//left eyebrow
 
   //antennas
   stroke(184, 255, 211); //light mint green
