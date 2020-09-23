@@ -7,6 +7,7 @@ Here is a description of this template p5 project.
 //HOW TO DO VARIABLES
 //STEP 1: DECLARE THEM (you can do it anywhere but preferably on top of brackets)
 let circleSize;
+let backgroundColour;
 
 // setup()
 // Is placed staticly, cannot change
@@ -15,6 +16,7 @@ let circleSize;
 function setup() {
   createCanvas(500,500);
   circleSize = 100;
+  backgroundColour = 0;
 }
 
 // draw()
@@ -22,9 +24,10 @@ function setup() {
 //
 // Description of draw() goes here.
 function draw() {
-  background(150, 0, 200);//mouseX/Y can be used anywhere
+  background(backgroundColour);//mouseX/Y can be used anywhere
   rectMode(CENTER);
-  rect(mouseX, mouseY, 100, 100); //mouseX/Y makes the coordinates folloe the mouse
+  rect(250, 250, circleSize, circleSize); //mouseX/Y makes the coordinates folloe the mouse
+  backgroundColour = backgroundColour + 1;
   //rect(250, 250, mouseX, mouseY); //changes size based on the mouse movement
   //variable width with always be the set width of the Canvas
   //same with variable height
