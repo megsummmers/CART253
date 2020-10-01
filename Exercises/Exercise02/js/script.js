@@ -13,14 +13,14 @@ let bg = {
 };
 let spaceship = {
   alpha: 255,
-  x: 900,
-  y: 900
+  x: 660,
+  y: 660
 };
 let meteor = {
   alpha: 0,
   x: 0,
   y: 500,
-  size: 300,
+  size: 250,
   speed: 14,
   r: 97,
   g: 69,
