@@ -10,13 +10,18 @@ let bg = {
   r: 0,
   g: 0,
   b: 0,
-}
+};
+
+let imag = {
+  x: 900,
+  y: 900
+};
 
 let covid19 = {
   x: 0,
-  y: 500, //check if you can put a random in there
-  size: 200,
-  speed: 15,
+  y: 500,
+  size: 300,
+  speed: 18,
   r: 97,
   g: 69,
   b: 63,
@@ -27,12 +32,12 @@ let user = {
   b: 200,
   r: 0
 };
-//game overlap
+
 let gameOver = false;
 
 // setup()
 //
-// sets canvas size and picture background
+// sets canvas size, noStroke and noCursor
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
@@ -41,37 +46,38 @@ function setup() {
 
 // draw()
 //
-// creates and moves circles around
-//contains if/else statements
+// creates and moves spaceship and meteor
+// contains if/else statements
+// -Game over -Overlap -Random start for meteor
+// -Colour change
 function draw() {
-  //background
+  //-------- BACKGROUND SETUP --------
   background(bg.r, bg.g, bg.b);
-  //static
 
-  //USER spaceship
-  image(img, mouseX, mouseY);
+  //-------- SPACESHIP SETUP --------
+  image(img, imag.x, imag.y);
 
-  //COVID19 circle
+  //-------- METOR SETUP --------
   fill(covid19.r, covid19.g, covid19.b);
   ellipse(covid19.x, covid19.y, covid19.size);
 
-  //movement
+  //-------- METOR MOVEMENT --------
   if(!gameOver){
     covid19.x = covid19.x + covid19.speed;
-  }else if(gameOver){
-    //covid19
+  } else if(gameOver){ //GAMEOVER SECTION
+    //-------- METOR GAMEOVER --------
     covid19.size = covid19.size + covid19.growthRate;
     covid19.size = constrain(covid19.size, 200, width);
     covid19.r = covid19.r +3
     covid19.g = covid19.g +3
     covid19.b = covid19.b +3
 
-    //background colour change
+    //-------- BACKGROUND GAMEOVER --------
     bg.r = bg.r + 3;
     bg.g = bg.g + 3;
     bg.b = bg.b + 3;
 
-    //Game Over text
+    //-------- GAMEOVER TEXT --------
     fill(0);
     textAlign(CENTER);
     textSize(250);
@@ -79,20 +85,20 @@ function draw() {
     text('Game Over.', width/2, height/2);
   }
 
-  //resets covid and sets new random y
+  //-------- METOR RESET/RANDOM --------
   if(covid19.x >= width +150){
     covid19.x = covid19.x - width -200;
     covid19.y = random(0, height);
   }
 
-  //Circles overlap if
+  //-------- OVERLAP CHECK --------
   let d = dist(mouseX, mouseY, covid19.x, covid19.y);
-  if(d <= 150){
+  if(d <= 175){
     user.b = user.b - 200;
     gameOver = true;
   }
 
-  //if statement for colour change
+  //-------- PROXIMITY METEOR COLOUR CHANGE --------
   if(!gameOver){
     if(d > 500){
       covid19.r = covid19.r - 10;
@@ -110,8 +116,22 @@ function draw() {
       covid19.b = constrain(covid19.b, 10, 63);
     }
   }
-}//draw }
-
+}
+//-------- IMAGE FUNCTION --------
 function preload(){
   img = loadImage('assets/images/8-bit-spaceship.PNG');
+}
+//-------- MOUSE DRAG FUNCTION --------
+function mouseDragged(){
+  //allows spaceship to move while mouse is dragged
+  imag.x = mouseX;
+  imag.y = mouseY;
+  //locks the cursor to the last coodinates
+  if(!locked){
+    locked = true;
+    requestPointerLock();
+  } else {
+    exitPointerLock();
+    locked = false;
+  }
 }
