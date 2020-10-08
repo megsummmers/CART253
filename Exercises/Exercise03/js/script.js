@@ -112,8 +112,8 @@ function titleScreen(){
   textSize(100);
   text('Welcome to looking for Love', width/2, height/3);
   textSize(60);
-  text("For info on how to play, press 'H'", width/2, height/2 -60);
-  text("To begin the game, press 'P'", width/2, height/2);
+  text("For info on how to play, press 'H'", width/2, height/2 -40);
+  text("To begin the game, press 'P'", width/2, height/2 +25);
   if(key === 'h'){
     fill(bg.pr, bg.pg, bg.pb);
     rectMode(CENTER);
@@ -122,7 +122,7 @@ function titleScreen(){
     fill(255);
     textSize(100);
     text('HOW TO PLAY:', width/2, height/2 - 120);
-    textSize(40);
+    textSize(30);
     text('Your goal is to find and touch the other circle before it shrinks away', width/2, height/2);
     text('To control the grey circle; use the arrow keys (up, down, left and right)', width/2, height/2 + 50);
     text('Each time the circle fully shrinks it will change positions and one of your hearts will disappear', width/2, height/2 + 100);
