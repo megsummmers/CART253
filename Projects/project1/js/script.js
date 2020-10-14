@@ -25,6 +25,35 @@ let user = {
   alpha: 255
 };
 
+let enemy = {
+  x: 0,
+  y: 0,
+  pathTop: 0,
+  pathBottom: 0,
+  alpha: 255,
+  x2: 0,
+  y2: 0,
+  pathTop2: 0,
+  pathBottom2: 0,
+  alpha2: 255,
+  size: 100,
+  speed: 5,
+  color: 255,
+};
+
+let coin = {
+  x: 0,
+  y: 0,
+  x2: 0,
+  y2: 0,
+  alpha: 0,
+  alpha2: 0,
+  size: 50,
+  r: 255,
+  g: 255,
+  b: 255,
+};
+
 let walls = {
   x1: 0,
   x2: 0,
@@ -46,19 +75,10 @@ let walls = {
   alpha: 100
 };
 
-let trophy = {
-  x: 0,
-  y: 0,
-  size: 40,
-  alpha: 0,
-  r: 255,
-  g: 200,
-  b: 60,
-}
-
 let state = 'gameplay';
 let rectSide = 'none';
-let trophyCount = false;
+let coinCount = false;
+let ending = 0;
 
 // setup()
 //
@@ -67,6 +87,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
   textFont('Helvetica');
+  preLoad();
 
   //----- VARIABLE SETUP -----
   walls.x1 = width/8 - 100;
@@ -81,8 +102,18 @@ function setup() {
   walls.y5 = height/8;
   walls.x6 = width/2 + 400;
   walls.y6 = height/2;
-  trophy.x = width - 100;
-  trophy.y = height -100
+  coin.x = width - 100;
+  coin.y = height -100;
+  coin.x2 = width/2;
+  coin.y2 = height/2;
+  enemy.x = width/3 -100;
+  enemy.y = height/3 -200;
+  enemy.pathTop = height/3 -200;
+  enemy.pathBottom = height - height/3;
+  enemy.x2 = width/3 + width/3 -100;
+  enemy.y2 = height/3 -200;
+  enemy.pathTop2 = height/3 -200;
+  enemy.pathBottom2 = height - height/3;
 }
 
 // draw()
@@ -101,39 +132,81 @@ function draw() {
   }
 }
 
+//----- IMAGE PRELOAD -----
+function preLoad(){
+  imgC = loadImage ('assets/images/gold-coin.gif');
+  imgS = loadImage ('assets/images/pixel-spider.gif');
+}
+
 function titleScreen(){
 
 }
 
 function gameplay(){
+  //----- EXIT SETUP -----
+  push();
+  fill(140, 90, 75);
+  ellipse(50, 50, 100);
+  fill(0, 0, 0);
+  textSize(25);
+  textAlign(CENTER);
+  text('EXIT', 50, 60);
+  pop();
+
   //----- USER SETUP -----
   fill(user.color, user.color, user.color, user.alpha);
   ellipse(user.x, user.y, user.size);
 
-  //----- TROPHY SETUP -----
-  fill(trophy.r, trophy.g, trophy.b, trophy.alpha);
-  ellipse(trophy.x, trophy.y, trophy.size);
+  //----- COIN SETUP -----
+  tint(coin.r, coin.g, coin.b, coin.alpha);
+  image(imgC, coin.x, coin.y, coin.size, coin.size);
+  tint(coin.r, coin.g, coin.b, coin.alpha2);
+  image(imgC, coin.x2, coin.y2, coin.size, coin.size);
 
-  //----- EXIT SETUP -----
-  push();
-  fill(0, 0, 0);
-  textSize(5);
-  text('EXIT', 50, 50);
-  fill(140, 90, 75);
-  ellipse(50, 50, 100);
-  pop();
+  //----- ENEMY SETUP -----
+  tint(enemy.color, enemy.color, enemy.color, enemy.alpha);
+  image(imgS, enemy.x, enemy.y, enemy.size, enemy.size);
+  tint(enemy.color, enemy.color, enemy.color, enemy.alpha2);
+  image(imgS, enemy.x2, enemy.y2, enemy.size, enemy.size);
+
+  //----- ENEMY 1 -----
+  enemy.y = enemy.y + enemy.speed;
+  if(enemy.y >= enemy.pathBottom ) {
+    enemy.speed = -enemy.speed;
+  } else if(enemy.y < enemy.pathTop ){
+    enemy.speed = -enemy.speed;
+  }
+  //----- ENEMY 2 -----
+  enemy.y2 = enemy.y2 + enemy.speed;
+  if(enemy.y2 >= enemy.pathBottom2 ) {
+    enemy.speed = -enemy.speed;
+  } else if(enemy.y2 < enemy.pathTop2 ){
+    enemy.speed = -enemy.speed;
+  }
 
   //----- TROPHY PROXIMITY -----
-  let d = dist(user.x, user.y, trophy.x, trophy.y);
-  if (d <= 50){
-    trophy.alpha = 0;
-    trophyCount = true;
-  } else if (d > 300 && !trophyCount) {
-    trophy.alpha -= 20;
-    trophy.alpha = constrain(trophy.alpha, 0, 255);
-  } else if (d < 300 && !trophyCount) {
-    trophy.alpha += 20;
-    trophy.alpha = constrain(trophy.alpha, 0, 255);
+  let dT = dist(user.x, user.y, coin.x, coin.y);
+  if (dT <= 50){
+    coin.alpha = 0;
+    coinCount = true;
+  } else if (dT > 300 && !coinCount) {
+    coin.alpha -= 20;
+    coin.alpha = constrain(coin.alpha, 0, 255);
+  } else if (dT < 300 && !coinCount) {
+    coin.alpha += 20;
+    coin.alpha = constrain(coin.alpha, 0, 255);
+  }
+  //----- ENEMY PROXIMITY -----
+  let dE = dist(user.x, user.y, enemy.x, enemy.y);
+  if (dE <= 75){
+    ending = 2;
+    state = 'ending';
+  } else if (dE > 300) {
+    enemy.alpha -= 20;
+    enemy.alpha = constrain(enemy.alpha, 0, 255);
+  } else if (dE < 300) {
+    enemy.alpha += 20;
+    enemy.alpha = constrain(enemy.alpha, 0, 255);
   }
 
   //----- DUNGEON WALLS -----
@@ -170,7 +243,8 @@ function gameplay(){
   }
 
   //----- GAME END -----
-  if (trophyCount && user.x === 50 && user.y === 50){
+  if (coinCount && user.x === 50 && user.y === 50){
+    ending = 1;
     state = 'ending';
   }
 }
