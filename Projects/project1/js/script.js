@@ -26,28 +26,18 @@ let user = {
 };
 
 let enemy = {
-  x: 0,
-  y: 0,
-  pathTop: 0,
-  pathBottom: 0,
-  alpha: 255,
-  x2: 0,
-  y2: 0,
-  pathTop2: 0,
-  pathBottom2: 0,
-  alpha2: 255,
+  x: 0, y: 0, pathTop: 0, pathBottom: 0, alpha: 255,
+  x2: 0, y2: 0, pathTop2: 0, pathBottom2: 0, alpha2: 255,
   size: 100,
   speed: 5,
   color: 255,
 };
 
 let coin = {
-  x: 0,
-  y: 0,
-  x2: 0,
-  y2: 0,
-  alpha: 0,
-  alpha2: 0,
+  x: 0, y: 0,
+  x2: 0, y2: 0,
+  x3: 0, y3: 0,
+  alpha: 0, alpha2: 0, alpha3: 0,
   size: 50,
   r: 255,
   g: 255,
@@ -77,8 +67,11 @@ let walls = {
 
 let state = 'gameplay';
 let rectSide = 'none';
-let coinCount = false;
 let ending = 0;
+let coinCount = 0;
+let coin1 = false;
+let coin2 = false;
+let coin3 = false;
 
 // setup()
 //
@@ -104,8 +97,10 @@ function setup() {
   walls.y6 = height/2;
   coin.x = width - 100;
   coin.y = height -100;
-  coin.x2 = width/2;
-  coin.y2 = height/2;
+  coin.x2 = width/2 -100;
+  coin.y2 = height/2 -75;
+  coin.x3 = width/2 -100;
+  coin.y3 = 50;
   enemy.x = width/3 -100;
   enemy.y = height/3 -200;
   enemy.pathTop = height/3 -200;
@@ -162,6 +157,8 @@ function gameplay(){
   image(imgC, coin.x, coin.y, coin.size, coin.size);
   tint(coin.r, coin.g, coin.b, coin.alpha2);
   image(imgC, coin.x2, coin.y2, coin.size, coin.size);
+  tint(coin.r, coin.g, coin.b, coin.alpha3);
+  image(imgC, coin.x3, coin.y3, coin.size, coin.size);
 
   //----- ENEMY SETUP -----
   tint(enemy.color, enemy.color, enemy.color, enemy.alpha);
@@ -184,30 +181,65 @@ function gameplay(){
     enemy.speed = -enemy.speed;
   }
 
-  //----- TROPHY PROXIMITY -----
-  let dT = dist(user.x, user.y, coin.x, coin.y);
-  if (dT <= 50){
-    coin.alpha = 0;
-    coinCount = true;
-  } else if (dT > 300 && !coinCount) {
-    coin.alpha -= 20;
-    coin.alpha = constrain(coin.alpha, 0, 255);
-  } else if (dT < 300 && !coinCount) {
-    coin.alpha += 20;
-    coin.alpha = constrain(coin.alpha, 0, 255);
+  //----- COIN PROXIMITY -----
+  if(!coin1){
+    coin.alpha = proxFadeCoin(user.x, user.y, coin.x, coin.y, coin.alpha);
+    if(coin.alpha === -1){
+      coinCount = coinCount + 1;
+      coin1 = true;
+    }
   }
+  if (!coin2){
+    coin.alpha2 = proxFadeCoin(user.x, user.y, coin.x2, coin.y2, coin.alpha2);
+    if(coin.alpha2 === -1){
+      coinCount = coinCount + 1;
+      coin2 = true;
+    }
+  }
+  if (!coin3){
+    coin.alpha3 = proxFadeCoin(user.x, user.y, coin.x3, coin.y3, coin.alpha3);
+    if(coin.alpha3 === -1){
+      coinCount = coinCount + 1;
+      coin3 = true;
+    }
+  }
+
+  //----- COIN PROXIMITY -----
+    enemy.alpha = proxFadeCoin(user.x, user.y, enemy.x, enemy.y, enemy.alpha);
+    if(enemy.alpha === -1){
+      ending = 2;
+      state = "ending";
+    }
+    enemy.alpha2 = proxFadeCoin(user.x, user.y, enemy.x2, enemy.y2, enemy.alpha2);
+    if(enemy.alpha2 === -1){
+      ending = 2;
+      state = "ending";
+    }
+
   //----- ENEMY PROXIMITY -----
-  let dE = dist(user.x, user.y, enemy.x, enemy.y);
-  if (dE <= 75){
-    ending = 2;
-    state = 'ending';
-  } else if (dE > 300) {
-    enemy.alpha -= 20;
-    enemy.alpha = constrain(enemy.alpha, 0, 255);
-  } else if (dE < 300) {
-    enemy.alpha += 20;
-    enemy.alpha = constrain(enemy.alpha, 0, 255);
-  }
+  // let dE = dist(user.x, user.y, enemy.x, enemy.y);
+  // if (dE <= 75){
+  //   ending = 2;
+  //   state = 'ending';
+  // } else if (dE > 300) {
+  //   enemy.alpha -= 20;
+  //   enemy.alpha = constrain(enemy.alpha, 0, 255);
+  // } else if (dE < 300) {
+  //   enemy.alpha += 20;
+  //   enemy.alpha = constrain(enemy.alpha, 0, 255);
+  // }
+  // //----- ENEMY 2 PROXIMITY ----- MAKE INTO A FUNCTION
+  // let dE2 = dist(user.x, user.y, enemy.x2, enemy.y2);
+  // if (dE2 <= 75){
+  //   ending = 2;
+  //   state = 'ending';
+  // } else if (dE2 > 300) {
+  //   enemy.alpha2 -= 20;
+  //   enemy.alpha2 = constrain(enemy.alpha2, 0, 255);
+  // } else if (dE2 < 300) {
+  //   enemy.alpha2 += 20;
+  //   enemy.alpha2 = constrain(enemy.alpha2, 0, 255);
+  // }
 
   //----- DUNGEON WALLS -----
   rectMode(CORNER);
@@ -284,4 +316,32 @@ function collisionDetect(cx, cy, radius, rx, ry, rw, rh){
   }
   rectSide = 'none';
   return rectSide;
+}
+
+function proxFadeCoin (userX, userY, coinX, coinY, alpha){
+  let d = dist(userX, userY, coinX, coinY);
+  if (d <= 50){
+    alpha = -1;
+  } else if (d > 300) {
+    alpha -= 20;
+    alpha = constrain(alpha, 0, 255);
+  } else if (d < 300) {
+    alpha += 20;
+    alpha = constrain(alpha, 0, 255);
+  }
+  return alpha;
+}
+
+function proxFadeEnemy (userX, userY, enemyX, enemyY, alpha){
+  let d = dist(userX, userY, enemyX, enemyY);
+  if (d <= 50){
+    alpha = -1;
+  } else if (d > 300) {
+    alpha -= 20;
+    alpha = constrain(alpha, 0, 255);
+  } else if (d < 300) {
+    alpha += 20;
+    alpha = constrain(alpha, 0, 255);
+  }
+  return alpha;
 }
