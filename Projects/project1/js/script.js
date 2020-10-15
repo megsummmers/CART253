@@ -5,14 +5,22 @@ Extra code by Meg Summers
 Here is a description of this template p5 project.
 **************************************************/
 
+//Ending 1 = got 1 coin
+//Ending 2 = got 2 coins
+//Ending 3 = got 3 coins
+//Ending 4 = died by spider
+
 //VARIABLES
 let bg = {
   r: 0,
-  g: 0,
+  g: 15,
   b: 0,
-  er: 255,
-  eg: 200,
-  eb: 60
+  gr: 255,
+  gg: 200,
+  gb: 60,
+  rr: 175,
+  rg: 25,
+  rb: 25
 };
 
 let user = {
@@ -44,6 +52,11 @@ let coin = {
   b: 255,
 };
 
+let door = {
+  x: 10, y: 5,
+  w: 80, h: 100
+};
+
 let walls = {
   x1: 0,
   x2: 0,
@@ -57,21 +70,22 @@ let walls = {
   y4: 0,
   y5: 0,
   y6: 0,
-  r: 70,
-  g: 60,
-  b: 60,
+  r: 30,
+  g: 30,
+  b: 30,
   w: 350,
   h: 250,
   alpha: 100
 };
 
-let state = 'gameplay';
+let state = 'title';
 let rectSide = 'none';
 let ending = 0;
 let coinCount = 0;
 let coin1 = false;
 let coin2 = false;
 let coin3 = false;
+
 
 // setup()
 //
@@ -123,48 +137,83 @@ function draw() {
   } else if (state === 'gameplay'){
     gameplay();
   } else if (state === 'ending'){
-    endScreen();
+    endScreen(ending);
   }
 }
 
 //----- IMAGE PRELOAD -----
 function preLoad(){
-  imgC = loadImage ('assets/images/gold-coin.gif');
-  imgS = loadImage ('assets/images/pixel-spider.gif');
+  imgCoin = loadImage ('assets/images/gold-coin.gif');
+  imgSpider = loadImage ('assets/images/pixel-spider.gif');
+  imgDoor = loadImage ('assets/images/pixel-door.jpg');
 }
 
+//----- TITLE SCREEN -----
 function titleScreen(){
-
+  fill(bg.gr, bg.gg, bg.gb);
+  rectMode(CENTER);
+  rect(width/2, height/2, windowWidth, windowHeight);
+  textAlign(CENTER);
+  fill(255);
+  textSize(100);
+  text('DUNGEON QUEST', width/2, height/3);
+  textSize(60);
+  text("For info on how to play, press 'H'", width/2, height/2);
+  text("To begin the game, press 'P'", width/2, height/2 +65);
+  if(key === 'h'){
+    fill(bg.gr, bg.gg, bg.gb);
+    rectMode(CENTER);
+    rect(width/2, height/2, windowWidth, windowHeight);
+    textAlign(CENTER);
+    fill(255);
+    textSize(100);
+    text('HOW TO PLAY:', width/2, height/5);
+    imageMode(CENTER);
+    image(imgCoin, width/5, height/3, 100, 100);
+    image(imgSpider, width/2, height/3, 150, 150);
+    textSize(30);
+    textAlign(CENTER);
+    text("Your goal is to find and collect", width/5, height/2);
+    text("as many gold coins as possible", width/5, height/2 +50);
+    text("then get back to the door.", width/5, height/2 +100);
+    text("Watch out for the cave spiders!", width/2, height/2);
+    text("Get too close and you'll lose.", width/2, height/2 +50);
+    text("Control your character with the", width - width/5, height/2);
+    text("arrow keys and pick up ", width - width/5, height/2 +50);
+    text("coins by walking over them", width - width/5, height/2 +100);
+    textSize(60);
+    text("Press return to go back to the main menu.", width/2, height/2 + 250);
+  } else if (key === 'p' && state === 'title'){
+    state = 'gameplay';
+  }
 }
+
 
 function gameplay(){
-  //----- EXIT SETUP -----
-  push();
-  fill(140, 90, 75);
-  ellipse(50, 50, 100);
-  fill(0, 0, 0);
-  textSize(25);
-  textAlign(CENTER);
-  text('EXIT', 50, 60);
-  pop();
+  //----- EXIT DOOR SETUP -----
+  image(imgDoor, door.x, door.y, door.w, door.h);
 
   //----- USER SETUP -----
   fill(user.color, user.color, user.color, user.alpha);
   ellipse(user.x, user.y, user.size);
 
   //----- COIN SETUP -----
+  push();
   tint(coin.r, coin.g, coin.b, coin.alpha);
-  image(imgC, coin.x, coin.y, coin.size, coin.size);
+  image(imgCoin, coin.x, coin.y, coin.size, coin.size);
   tint(coin.r, coin.g, coin.b, coin.alpha2);
-  image(imgC, coin.x2, coin.y2, coin.size, coin.size);
+  image(imgCoin, coin.x2, coin.y2, coin.size, coin.size);
   tint(coin.r, coin.g, coin.b, coin.alpha3);
-  image(imgC, coin.x3, coin.y3, coin.size, coin.size);
+  image(imgCoin, coin.x3, coin.y3, coin.size, coin.size);
 
   //----- ENEMY SETUP -----
+  imageMode(CENTER);
   tint(enemy.color, enemy.color, enemy.color, enemy.alpha);
-  image(imgS, enemy.x, enemy.y, enemy.size, enemy.size);
+  image(imgSpider, enemy.x, enemy.y, enemy.size, enemy.size);
+  imageMode(CENTER);
   tint(enemy.color, enemy.color, enemy.color, enemy.alpha2);
-  image(imgS, enemy.x2, enemy.y2, enemy.size, enemy.size);
+  image(imgSpider, enemy.x2, enemy.y2, enemy.size, enemy.size);
+  pop();
 
   //----- ENEMY 1 -----
   enemy.y = enemy.y + enemy.speed;
@@ -204,42 +253,17 @@ function gameplay(){
     }
   }
 
-  //----- COIN PROXIMITY -----
-    enemy.alpha = proxFadeCoin(user.x, user.y, enemy.x, enemy.y, enemy.alpha);
-    if(enemy.alpha === -1){
-      ending = 2;
-      state = "ending";
-    }
-    enemy.alpha2 = proxFadeCoin(user.x, user.y, enemy.x2, enemy.y2, enemy.alpha2);
-    if(enemy.alpha2 === -1){
-      ending = 2;
-      state = "ending";
-    }
-
-  //----- ENEMY PROXIMITY -----
-  // let dE = dist(user.x, user.y, enemy.x, enemy.y);
-  // if (dE <= 75){
-  //   ending = 2;
-  //   state = 'ending';
-  // } else if (dE > 300) {
-  //   enemy.alpha -= 20;
-  //   enemy.alpha = constrain(enemy.alpha, 0, 255);
-  // } else if (dE < 300) {
-  //   enemy.alpha += 20;
-  //   enemy.alpha = constrain(enemy.alpha, 0, 255);
-  // }
-  // //----- ENEMY 2 PROXIMITY ----- MAKE INTO A FUNCTION
-  // let dE2 = dist(user.x, user.y, enemy.x2, enemy.y2);
-  // if (dE2 <= 75){
-  //   ending = 2;
-  //   state = 'ending';
-  // } else if (dE2 > 300) {
-  //   enemy.alpha2 -= 20;
-  //   enemy.alpha2 = constrain(enemy.alpha2, 0, 255);
-  // } else if (dE2 < 300) {
-  //   enemy.alpha2 += 20;
-  //   enemy.alpha2 = constrain(enemy.alpha2, 0, 255);
-  // }
+//----- ENEMY PROXIMITY FADE -----
+  enemy.alpha = proxFadeCoin(user.x, user.y, enemy.x, enemy.y, enemy.alpha);
+  if(enemy.alpha === -1){
+    ending = 4;
+    state = 'ending';
+  }
+  enemy.alpha2 = proxFadeCoin(user.x, user.y, enemy.x2, enemy.y2, enemy.alpha2);
+  if(enemy.alpha2 === -1){
+    ending = 4;
+    state = 'ending';
+  }
 
   //----- DUNGEON WALLS -----
   rectMode(CORNER);
@@ -275,19 +299,75 @@ function gameplay(){
   }
 
   //----- GAME END -----
-  if (coinCount && user.x === 50 && user.y === 50){
+  if (coinCount === 1 && user.x === 50 && user.y === 50){
     ending = 1;
+    state = 'ending';
+  } else if (coinCount === 2 && user.x === 50 && user.y === 50){
+    ending = 2;
+    state = 'ending';
+  } else if (coinCount === 3 && user.x === 50 && user.y === 50){
+    ending = 3;
     state = 'ending';
   }
 }
 
-function endScreen(){
-  background(bg.er, bg.eg, bg.eb);
-  fill(0, 0, 0);
-  textSize(75);
-  text('You win', width/2, height/2);
+
+//----- END SCREEN -----
+function endScreen(endingNum){
+  if(endingNum === 1){
+    fill(bg.gr, bg.gg, bg.gb);
+    rectMode(CENTER);
+    rect(width/2, height/2, width, height);
+    fill(0, 0, 0);
+    textSize(75);
+    textAlign(CENTER);
+    text('You win!', width/2, height/3);
+    text('You got 1/3 coins', width/2, height/3 + 80);
+    imageMode(CENTER);
+    image(imgCoin, width/2, height/3 + height/3);
+  } else if ( endingNum === 2){
+    fill(bg.gr, bg.gg, bg.gb);
+    rectMode(CENTER);
+    rect(width/2, height/2, width, height);
+    fill(0, 0, 0);
+    textSize(75);
+    textAlign(CENTER);
+    text('You win!', width/2, height/3);
+    text('You got 2/3 coins', width/2, height/3 + 80);
+    imageMode(CENTER);
+    image(imgCoin, width/2 - 60, height/3 + height/3);
+    image(imgCoin, width/2 + 60, height/3 + height/3);
+  } else if ( endingNum === 3){
+    fill(bg.gr, bg.gg, bg.gb);
+    rectMode(CENTER);
+    rect(width/2, height/2, width, height);
+    fill(0, 0, 0);
+    textSize(75);
+    textAlign(CENTER);
+    text('You win!', width/2, height/3);
+    text('You got all the coins', width/2, height/3 + 80);
+    imageMode(CENTER);
+    image(imgCoin, width/2, height/3 + height/3);
+    image(imgCoin, width/2 - 120, height/3 + height/3);
+    image(imgCoin, width/2 + 120, height/3 + height/3);
+  } else if ( endingNum === 4){
+    fill(bg.rr, bg.rg, bg.rb);
+    rectMode(CENTER);
+    rect(width/2, height/2, width, height);
+    fill(0, 0, 0);
+    textSize(75);
+    textAlign(CENTER);
+    text('You lose!', width/2, height/3);
+    text('Curse those nasty cave spiders', width/2, height/3 + 80);
+    imageMode(CENTER);
+    image(imgSpider, width/2, height/3 + height/3);
+    image(imgSpider, width/2 - 200, height/3 + height/3);
+    image(imgSpider, width/2 + 200, height/3 + height/3);
+  }
 }
 
+
+//----- WALL COLLISION DETECTION -----
 function collisionDetect(cx, cy, radius, rx, ry, rw, rh){
   //test variables
   let testX = cx;
@@ -317,7 +397,7 @@ function collisionDetect(cx, cy, radius, rx, ry, rw, rh){
   rectSide = 'none';
   return rectSide;
 }
-
+//----- COIN FADE FUNCTION -----
 function proxFadeCoin (userX, userY, coinX, coinY, alpha){
   let d = dist(userX, userY, coinX, coinY);
   if (d <= 50){
@@ -331,10 +411,11 @@ function proxFadeCoin (userX, userY, coinX, coinY, alpha){
   }
   return alpha;
 }
-
+//----- ENEMY FADE FUNCTION -----
 function proxFadeEnemy (userX, userY, enemyX, enemyY, alpha){
   let d = dist(userX, userY, enemyX, enemyY);
   if (d <= 50){
+    heartCounter = heartCounter - 1;
     alpha = -1;
   } else if (d > 300) {
     alpha -= 20;
