@@ -435,19 +435,19 @@ function gameplay(){
   }
 
   //----- GAME END -----
-  if (coinCount === 1 && user.x <= width/12 && user.y <= height/12){
+  if (coinCount === 1 && user.x <= width/9 && user.y <= height/9){
     ending = 1;
     state = 'ending';
-  } else if (coinCount === 2 && user.x <= width/12 && user.y <= height/12){
+  } else if (coinCount === 2 && user.x <= width/9 && user.y <= height/9){
     ending = 2;
     state = 'ending';
-  } else if (coinCount === 3 && user.x <= width/12 && user.y <= height/12){
+  } else if (coinCount === 3 && user.x <= width/9 && user.y <= height/9){
     ending = 3;
     state = 'ending';
-  } else if (coinCount === 4 && user.x <= width/12 && user.y <= height/12){
+  } else if (coinCount === 4 && user.x <= width/9 && user.y <= height/9){
     ending = 4;
     state = 'ending';
-  } else if (coinCount === 5 && user.x <= width/12 && user.y <= height/12){
+  } else if (coinCount === 5 && user.x <= width/9 && user.y <= height/9){
     ending = 5;
     state = 'ending';
   }
@@ -569,7 +569,7 @@ function collisionDetect(cx, cy, radius, rx, ry, rw, rh){
   let distX = cx-testX;
   let distY = cy-testY;
   let distance = sqrt( (distX*distX) + (distY*distY) );
-  
+
   if (distance <= radius) {
     return rectSide;
   }
