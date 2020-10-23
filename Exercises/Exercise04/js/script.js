@@ -87,7 +87,7 @@ function setup() {
   }
 }
 
-//----- CREATES FISH OBJECT -----
+//----- CREATES INFECTED OBJECTS -----
 function createInfected(x, y){
   //creates the object within the array
   let infected = {
@@ -105,10 +105,9 @@ function createInfected(x, y){
 
 // draw()
 //
-// sets background, moves the infected in the array and displays them
+// sets background and moves between states
 function draw() {
   background(0);
-  console.log(state);
 
   if (state === 'title'){
     titleScreen();
@@ -137,6 +136,7 @@ function titleScreen(){
   pop();
 }
 
+//----- DIFFICULTY SELECT -----
 function difficultySelect(){
   image(imgDifficulty, 0, 0, 600, 600);
 
@@ -175,6 +175,7 @@ function controlScreen(){
   }
 }
 
+//----- GAMEPLAY SECTION -----
 function gameplay(){
   //----- BACKGROUND IMAGE -----
   imageMode(CORNER);
@@ -190,6 +191,7 @@ function gameplay(){
     displayInfected(patients[i]);
   }
 
+  //----- USER + DOCTOR SETUP -----
   push();
   //user circle
   fill(user.color);
@@ -214,6 +216,7 @@ function gameplay(){
     user.x = user.x + user.speed;
     user.x = constrain(user.x, 0, width);
   }
+
   //----- DISTANCE CHECK FOR PATIENTS -----
   for (let j = 0; j < patients.length; j++) {
     touchInfected(patients[j]);
@@ -252,27 +255,29 @@ function gameplay(){
   }
 }
 
+//----- END SCREEN SECTION -----
 function endScreen(endNumber){
-  if (endNumber === 1) {
+  if (endNumber === 1) { //lose screen
     imageMode(CORNER);
     image(imgLose, 0, 0, 600, 600);
     if(play){
       loseSound.play();
       play = false;
     }
-  } else if (endNumber === 2 && difficulty === 'hard'){
+  } else if (endNumber === 2 && difficulty === 'hard'){ //hard more win
     imageMode(CORNER);
     image(imgHardWin, 0, 0, 600, 600);
     push();
     fill(255, 255, 255, 0);
     ellipse(trophy.x, trophy.y, trophy.size);
     pop();
-  } else if (endNumber === 2) {
+  } else if (endNumber === 2) { //easy mode win
     imageMode(CORNER);
     image(imgEasyWin, 0, 0, 600, 600);
   }
 }
 
+//----- USER + DOCTOR PROXIMITY -----
 function touchInfected(infected) {
   let userDistance = dist(user.x, user.y, infected.x, infected.y);
   let enemyDistance = dist(enemy.x, enemy.y, infected.x, infected.y);
@@ -294,14 +299,13 @@ function touchInfected(infected) {
   }
 }
 
-//----- MOVES THE FISH
+//----- MOVES THE PATIENTS -----
 function moveInfected(infected) {
   let change = random(0, 1);
   if (change < 0.05) {
     infected.vx = random(-infected.speed, infected.speed);
     infected.vy = random(-infected.speed, infected.speed);
   }
-
   infected.x = infected.x + infected.vx;
   infected.y = infected.y + infected.vy;
 
@@ -309,7 +313,7 @@ function moveInfected(infected) {
   infected.y = constrain(infected.y, 0, height);
 }
 
-//----- FISH DISPLAY CONTROL -----
+//----- PATIENT DISPLAY CONTROL -----
 function displayInfected(infected) {
   push();
   fill(infected.r, infected.g, infected.b);
