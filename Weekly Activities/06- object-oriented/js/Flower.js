@@ -15,20 +15,6 @@ class Flower {
       this.alive = true;
     }
 
-    display() {
-      push();
-      strokeWeight(this.stemThickness);
-      // stem line
-      stroke(this.stemColor.r, this.stemColor.g, this.stemColor.b);
-      line(this.x, this.y, this.x, this.y + this.stemLength);
-      // circle w/ stroke
-      strokeWeight(this.petalThickness);
-      fill(this.centreColor.r, this.centreColor.g, this.centreColor.b);
-      stroke(this.petalColor.r, this.petalColor.g, this.petalColor.b);
-      ellipse(this.x, this.y, this.size);
-      pop();
-    }
-
     shrink() {
       let shrinkage = random(0, 0.1);
       this.petalThickness = this.petalThickness - shrinkage / 10;
@@ -48,11 +34,25 @@ class Flower {
       this.size = constrain(this.size, 0, this.maxSize);
     }
 
-    mousePressed() {
-      let d = dist(this.x, this.y, mouseX, mouseY);
-      if (d < this.size/2 + this.petalThickness) {
-        this.stemLength = this.stemLength + 5;
-        this.y = this.y - 5;
-      }
+    display() {
+      push();
+      strokeWeight(this.stemThickness);
+      // stem line
+      stroke(this.stemColor.r, this.stemColor.g, this.stemColor.b);
+      line(this.x, this.y, this.x, this.y + this.stemLength);
+      // circle w/ stroke
+      strokeWeight(this.petalThickness);
+      fill(this.centreColor.r, this.centreColor.g, this.centreColor.b);
+      stroke(this.petalColor.r, this.petalColor.g, this.petalColor.b);
+      ellipse(this.x, this.y, this.size);
+      pop();
     }
+
+    // mousePressed() {
+    //   let d = dist(this.x, this.y, mouseX, mouseY);
+    //   if (d < this.size/2 + this.petalThickness) {
+    //     this.stemLength = this.stemLength + 5;
+    //     this.y = this.y - 5;
+    //   }
+    // }
 }
