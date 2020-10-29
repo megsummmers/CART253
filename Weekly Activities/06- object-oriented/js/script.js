@@ -9,6 +9,8 @@ Here is a description of this template p5 project.
 let garden = {
   flowers: [],
   numFlowers: 20,
+  bees: [],
+  numBees: 5,
   grassColor: {
     r: 120,
     g: 180,
@@ -52,7 +54,14 @@ function setup() {
     // Add the flower to the array of flowers
     garden.flowers.push(flower);
   }
-  garden.flowers.sort(sortByY);
+  //garden.flowers.sort(sortByY);
+  for (let i = 0; i < garden.numBees; i++){
+    let x = random(0, width);
+    let y = random(0, height);
+
+    let bee = new Bee(x, y);
+    garden.bees.push(bee);
+  }
 }
 
 // draw()
@@ -63,17 +72,36 @@ function draw() {
 
   for (let i = 0; i < garden.flowers.length; i++){
     let flower = garden.flowers[i];
-    flower.display();
+    if (flower.alive) {
+      flower.shrink();
+      flower.display();
+    }
+  }
+
+  for (let i = 0; i < garden.bees.length; i++){
+    let bee = garden.bees[i];
+
+    if (bee.alive){
+      bee.shrink();
+      bee.move();
+
+      for (let j = 0; j < garden.flowers.length; j++){
+        let flower = garden.flowers[j];
+        bee.pollinationCheck(flower);
+      }
+
+      bee.display();
+    }
   }
 }
 // sorts from closest to furthest
-function sortByY(flower1, flower2) {
-  return flower1.y - flower2.y;
-}
-
-function mousePressed() {
-  for (let i = 0; i < garden.flowers.length; i++){
-    let flower = garden.flowers[i];
-    flower.mousePressed();
-  }
-}
+// function sortByY(flower1, flower2) {
+//   return flower1.y - flower2.y;
+// }
+//
+// function mousePressed() {
+//   for (let i = 0; i < garden.flowers.length; i++){
+//     let flower = garden.flowers[i];
+//     flower.mousePressed();
+//   }
+// }
