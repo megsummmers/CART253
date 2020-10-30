@@ -24,11 +24,12 @@ class Flower {
       this.petalColor = petalColor;
       this.centreColor = centreColor;
       this.alive = true;
+      this.deadCounted = false;
     }
 
     shrink() {
       //----- FLOWER SHRINKAGE -----
-      let shrinkage = random(0, 0.1);
+      let shrinkage = random(0, 0.12);
       this.petalThickness = this.petalThickness - shrinkage / 10;
       this.size = this.size - shrinkage;
       //----- FLOWER IS D E A D -----
@@ -37,9 +38,19 @@ class Flower {
       }
     }
 
-    growth() {
+    beeGrowth() {
       //----- FLOWER GROWTH -----
       let growth = random(0, 0.5);
+      this.petalThickness = this.petalThickness + growth /10;
+      this.size = this.size + growth;
+
+      this.petalThickness = constrain(this.petalThickness, 0, this.maxPetalThickness);
+      this.size = constrain(this.size, 0, this.maxSize);
+    }
+
+    userGrowth() {
+      //----- FLOWER GROWTH -----
+      let growth = random(0, 2.5);
       this.petalThickness = this.petalThickness + growth /10;
       this.size = this.size + growth;
 

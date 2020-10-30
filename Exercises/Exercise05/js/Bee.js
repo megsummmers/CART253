@@ -10,16 +10,27 @@ class Bee {
     this.vx = 0;
     this.vy = 0;
     this.speed = 5;
-    this.shrinkRate = 0.05;
+    this.shrinkRate = 4;
     this.growthRate = 0.1;
     this.jitteriness = 0.1;
     this.alive = true;
   }
 
+  //----- FLOWER TOUCH CHECK -----
   pollinationCheck(flower) {
     let d = dist(this.x, this.y, flower.x, flower.y);
     if (d < this.size / 2 + flower.size /2) {
-      flower.growth();
+      flower.beeGrowth();
+    }
+  }
+
+  //----- WASP TOUCH CHECK -----
+  waspTouch() {
+    //----- BEE SHRINKAGE -----
+    this.size = this.size - this.shrinkRate;
+    //----- BEE IS D E A D -----
+    if (this.size <= 0) {
+      this.alive = false;
     }
   }
 
@@ -35,7 +46,7 @@ class Bee {
     this.y = this.y + this.vy;
 
     this.x = constrain(this.x, 0, width);
-    this.y = constrain(this.y, 0, height);
+    this.y = constrain(this.y, height/5, height);
   }
 
   display() {
@@ -49,7 +60,7 @@ class Bee {
 
     //----- BODY -----
     push();
-    fill(225, 225, 50);
+    fill(255, 227, 43);
     noStroke();
     ellipse(this.x, this.y, this.size);
     pop();

@@ -11,8 +11,6 @@ keep as many flowers alive as you can for one day (1-2 minutes or inputted time?
 to win, if all your flowers die before the timer is up you lose.
 
 Checklist:
--Modify user properties and add ability to grow flowers
--add wasps + kill bees & stop user function
 -add timer (+ background change from yellow-blue-navy)
 -create title/end screen and add image assets
 **************************************************/
@@ -23,7 +21,9 @@ let garden = {
   flowers: [],
   numFlowers: 20,
   bees: [],
-  numBees: 5,
+  numBees: 4,
+  wasps: [],
+  numWasps: 2,
   grassColor: {
     r: 120,
     g: 180,
@@ -31,28 +31,68 @@ let garden = {
   }
 };
 
-let user = {
-  x: 500,
-  y: 500,
-  size: 50,
-  speed: 4,
-  color: 255
+let bg = {
+  x: 0,
+  y: 0,
+  h: 800,
+  w: 1000,
+  skyColor: {
+    r: 200,
+    g: 235,
+    b: 255
+  },
+  grassColor: {
+    r: 60,
+    g: 200,
+    b: 70
+  }
+};
+
+let sun = {
+  x: 300,
+  y: 50,
+  size: 150,
+  color: 255,
+  alpha: 255
+};
+
+let moon = {
+  x: 675,
+  y: 250,
+  size: 100,
+  color: 255,
+  alpha: 255
 };
 
 let state = 'gameplay';
-let ending = 0;
+let ending = 1;
+let gameTimer = 0;
+let gameLength = 60 * 30;
+let numDeadFlowers = 0;
+let user;
+let imgSun;
+let imgMoon;
+
+function preLoad(){
+  imgSun = loadImage('assets/images/sun.png');
+  imgMoon = loadImage('assets/images/moon.png');
+}
 
 // setup()
 //
 // Description of setup() goes here.
 function setup() {
   createCanvas(1000, 1000);
+  preLoad();
+
+  //VARIABLE SETUP
+  bg.y = height/5;
 
   for (let i = 0; i < garden.numFlowers; i++) {
     //SETS VARIABLES FOR CONSTRUCTOR
     let config = {
       x: random(0, width),
-      y: random(0, height),
+      y: random(height/5, height),
       size: random(50, 80),
       stemLength: random(50, 80),
       stemThickness: random(8, 12),
@@ -89,6 +129,24 @@ function setup() {
     let bee = new Bee(x, y);
     garden.bees.push(bee);
   }
+  //----- CREATES AND PUSHES WASPS -----
+  for (let i = 0; i < garden.numWasps; i++){
+    let x = random(0, width);
+    let y = random(0, height);
+
+    let wasp = new Wasp(x, y);
+    garden.wasps.push(wasp);
+  }
+  //----- CREATE USER -----
+  let userSettings = {
+    x: 500,
+    y: 500,
+    size: 100,
+    speed: 4,
+    color: 255,
+    hit: false
+  };
+  user = new User(userSettings);
 }
 
 // draw()
@@ -96,7 +154,13 @@ function setup() {
 //
 function draw() {
   //----- BACKGROUND -----
-  background(garden.grassColor.r, garden.grassColor.g, garden.grassColor.b);
+  background(bg.skyColor.r, bg.skyColor.g, bg.skyColor.b);
+  bgColorChange();
+  //----- GAME TIMER -----
+  gameTimer++;
+  if (gameTimer >= gameLength) {
+    state = 'ending';
+  }
   //----- STATE -----
   if (state === 'title'){
     titleScreen();
@@ -114,15 +178,36 @@ function titleScreen(){
 
 //----- GAMEPLAY SCREEN -----
 function gameplay() {
+  push();
+  imageMode(CENTER);
+  tint(sun.color, sun.color, sun.color, sun.alpha);
+  image(imgSun, sun.x, sun.y, sun.size, sun.size);
+  tint(moon.color, moon.color, moon.color, moon.alpha);
+  image(imgMoon, moon.x, moon.y, moon.size, moon.size);
+  pop();
+
+  //----- BACKGROUND -----
+  push();
+  rectMode(CORNER);
+  noStroke();
+  fill(bg.grassColor.r, bg.grassColor.g, bg.grassColor.b);
+  rect(bg.x, bg.y, bg.w, bg.h);
+  pop();
+
+
   //----- FLOWER DISPLAY AND SHRINK -----
   for (let i = 0; i < garden.flowers.length; i++){
     let flower = garden.flowers[i];
     if (flower.alive) {
       flower.shrink();
       flower.display();
+    } if (!flower.alive && !flower.deadCounted) {
+      numDeadFlowers = numDeadFlowers + 1;
+      flower.deadCounted = true;
     }
   }
-  //------ BEE DISPLAY AND POLLINATION CHECK -----
+
+  //----- BEE DISPLAY AND POLLINATION CHECK -----
   for (let i = 0; i < garden.bees.length; i++){
     let bee = garden.bees[i];
     if (bee.alive){
@@ -136,25 +221,56 @@ function gameplay() {
     }
   }
 
-  //----- USER DISPLAY ----
-  push();
-  fill(user.color, user.color, user.color);
-  noStroke();
-  ellipse(user.x, user.y, user.size);
-  pop();
+  //----- WASP DISPLAY AND BEE CHECK -----
+  for (let i = 0; i < garden.wasps.length; i++){
+    let wasp = garden.wasps[i];
+    wasp.move();
+    //CHECK IF WASPS KILLS A BEE
+    for (let j = 0; j < garden.bees.length; j++){
+      let bee = garden.bees[j];
+      wasp.beeCheck(bee);
+    }
+    wasp.display();
+  }
 
-  if (keyIsDown(UP_ARROW)){
-    user.y = user.y - user.speed;
-    user.y = constrain(user.y, 50, height - 50);
-  } else if (keyIsDown(DOWN_ARROW)){
-    user.y = user.y + user.speed;
-    user.y = constrain(user.y, 50, height - 50);
-  } else if (keyIsDown(LEFT_ARROW)){
-    user.x = user.x - user.speed;
-    user.x = constrain(user.x, 50, width - 50);
-  } else if (keyIsDown(RIGHT_ARROW)){
-    user.x = user.x + user.speed;
-    user.x = constrain(user.x, 50, width - 50);
+  //----- USER FLOWER PROX. CHECK -----
+  for (let i = 0; i < garden.flowers.length; i++){
+    let flower = garden.flowers[i];
+    user.waterFlowers(flower);
+  }
+  user.move();
+  user.display();
+  //----- USER TOUCH WASP CHECK -----
+  for (let i = 0; i < garden.wasps.length; i++){
+    let wasp = garden.wasps[i];
+    user.waspCheck(wasp);
+  }
+
+  //----- ALL FLOWERS DEAD -----
+  if(numDeadFlowers === garden.numFlowers){
+    ending = 2;
+    state = 'ending';
+  }
+}
+
+//----- ENDING SCREEN(S) -----
+function endScreen(endNum) {
+  if(ending === 1){
+    fill(0, 0, 0);
+    rectMode(CENTER);
+    rect(width/2, height/2, width, height);
+    fill(255, 255, 255);
+    textSize(75);
+    textAlign(CENTER);
+    text('You win!', width/2, height/3);
+  } else if (ending === 2){
+    fill(0, 0, 0);
+    rectMode(CENTER);
+    rect(width/2, height/2, width, height);
+    fill(255, 255, 255);
+    textSize(75);
+    textAlign(CENTER);
+    text('You lose!', width/2, height/3);
   }
 }
 
@@ -163,6 +279,26 @@ function sortByY(flower1, flower2) {
   return flower1.y - flower2.y;
 }
 
-//----- ENDING SCREEN(S) -----
-function endScreen() {
+//----- CHANGES THE BACKGROUND -----
+function bgColorChange() {
+  if(gameTimer <= gameLength/2){
+    //----- SKY CHANGE -----
+    bg.skyColor.r = bg.skyColor.r - 0.2;
+    bg.skyColor.r = constrain(bg.skyColor.r, 10, 200);
+    bg.skyColor.g = bg.skyColor.g - 0.2;
+    bg.skyColor.g = constrain(bg.skyColor.g, 150, 235);
+    bg.skyColor.b = bg.skyColor.b - 0.2;
+    bg.skyColor.b = constrain(bg.skyColor.b, 245, 255);
+    //----- SUN -----
+    sun.y = sun.y + 0.25;
+  } else if(gameTimer >= gameLength/2){
+    bg.skyColor.r = bg.skyColor.r - 0.2;
+    bg.skyColor.r = constrain(bg.skyColor.r, 5, 10);
+    bg.skyColor.g = bg.skyColor.g - 0.2;
+    bg.skyColor.g = constrain(bg.skyColor.g, 15, 150);
+    bg.skyColor.b = bg.skyColor.b - 0.2;
+    bg.skyColor.b = constrain(bg.skyColor.b, 80, 245);
+    //----- MOON -----
+    moon.y = moon.y - 0.25;
+  }
 }
