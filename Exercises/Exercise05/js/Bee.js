@@ -4,7 +4,7 @@ class Bee {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.size = 40;
+    this.size = 75;
     this.minSize = 10;
     this.maxSize = 40;
     this.vx = 0;
@@ -51,26 +51,8 @@ class Bee {
 
   display() {
     push();
-    //----- WINGS -----
-    fill(255, 255, 255);
-    noStroke();
-    ellipse(this.x - this.size / 2, this.y, this.size / 2);
-    ellipse(this.x + this.size / 2, this.y, this.size / 2);
-    pop();
-
-    //----- BODY -----
-    push();
-    fill(255, 227, 43);
-    noStroke();
-    ellipse(this.x, this.y, this.size);
-    pop();
-
-    //----- EYES -----
-    push();
-    fill(0, 0, 0);
-    noStroke();
-    ellipse(this.x - this.size / 10, this.y, this.size / 10);
-    ellipse(this.x + this.size / 10, this.y, this.size / 10);
+    imageMode(CENTER);
+    image(imgBee, this.x, this.y, this.size, this.size);
     pop();
   }
 }

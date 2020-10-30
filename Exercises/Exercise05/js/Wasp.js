@@ -4,7 +4,7 @@ class Wasp {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.size = 40;
+    this.size = 80;
     this.vx = 0;
     this.vy = 0;
     this.speed = 5;
@@ -37,26 +37,8 @@ class Wasp {
 
   display() {
     push();
-    //----- WINGS -----
-    fill(200, 200, 200);
-    noStroke();
-    ellipse(this.x - this.size / 2, this.y, this.size / 2);
-    ellipse(this.x + this.size / 2, this.y, this.size / 2);
-    pop();
-
-    //----- BODY -----
-    push();
-    fill(214, 186, 0);
-    noStroke();
-    ellipse(this.x, this.y, this.size);
-    pop();
-
-    //----- EYES -----
-    push();
-    fill(215, 0, 0);
-    noStroke();
-    ellipse(this.x - this.size / 10, this.y, this.size / 10);
-    ellipse(this.x + this.size / 10, this.y, this.size / 10);
+    imageMode(CENTER);
+    image(imgWasp, this.x, this.y, this.size, this.size);
     pop();
   }
 }

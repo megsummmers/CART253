@@ -8,7 +8,8 @@ class Flower {
       petalThickness,
       stemColor,
       petalColor,
-      centreColor
+      centreColor,
+      shrinkage
     }) {
       //FLOWER POSITIONS AND SIZES
       this.x = x;
@@ -23,15 +24,15 @@ class Flower {
       this.stemColor = stemColor;
       this.petalColor = petalColor;
       this.centreColor = centreColor;
+      this.shrinkage = shrinkage;
       this.alive = true;
       this.deadCounted = false;
     }
 
     shrink() {
       //----- FLOWER SHRINKAGE -----
-      let shrinkage = random(0, 0.12);
-      this.petalThickness = this.petalThickness - shrinkage / 10;
-      this.size = this.size - shrinkage;
+      this.petalThickness = this.petalThickness - this.shrinkage / 10;
+      this.size = this.size - this.shrinkage;
       //----- FLOWER IS D E A D -----
       if (this.petalThickness <= 0 || this.size <= 0) {
         this.alive = false;

@@ -10,9 +10,6 @@ Wasps will fly around to kill the bees and slow you down.
 keep as many flowers alive as you can for one day (1-2 minutes or inputted time??)
 to win, if all your flowers die before the timer is up you lose.
 
-Checklist:
--add timer (+ background change from yellow-blue-navy)
--create title/end screen and add image assets
 **************************************************/
 
 "use strict";
@@ -64,7 +61,7 @@ let moon = {
   alpha: 255
 };
 
-let state = 'gameplay';
+let state = 'title';
 let ending = 1;
 let gameTimer = 0;
 let gameLength = 60 * 30;
@@ -72,10 +69,30 @@ let numDeadFlowers = 0;
 let user;
 let imgSun;
 let imgMoon;
+let imgBee;
+let imgWasp;
+let imgGardenerL;
+let imgGardenerR;
+let imgStunL;
+let imgStunR;
+let imgWin;
+let imgLose;
+let imgTitle;
+let imgHowToPlay;
 
 function preLoad(){
   imgSun = loadImage('assets/images/sun.png');
   imgMoon = loadImage('assets/images/moon.png');
+  imgBee = loadImage('assets/images/bee.png');
+  imgWasp = loadImage('assets/images/wasp.png');
+  imgGardenerL = loadImage('assets/images/gardener_L.png');
+  imgGardenerR = loadImage('assets/images/gardener_R.png');
+  imgStunL = loadImage('assets/images/stunL.png');
+  imgStunR = loadImage('assets/images/stunR.png');
+  imgWin = loadImage('assets/images/win.png');
+  imgLose = loadImage('assets/images/lose.png');
+  imgTitle = loadImage('assets/images/title_screen.png');
+  imgHowToPlay = loadImage('assets/images/how_to_play.png');
 }
 
 // setup()
@@ -111,7 +128,8 @@ function setup() {
         r: random(0, 50),
         g: random(0, 50),
         b: random(0, 50)
-      }
+      },
+      shrinkage: 0.12
     };
 
     //----- CREATES AND PUSHES FLOWERS INTO ARRAY -----
@@ -141,9 +159,13 @@ function setup() {
   let userSettings = {
     x: 500,
     y: 500,
-    size: 100,
+    size: 200,
     speed: 4,
     color: 255,
+    alphaL: 255,
+    alphaR: 0,
+    alphaSL: 0,
+    alphaSR: 0,
     hit: false
   };
   user = new User(userSettings);
@@ -164,6 +186,8 @@ function draw() {
   //----- STATE -----
   if (state === 'title'){
     titleScreen();
+  } else if (state === 'instructions'){
+    instructions();
   } else if (state === 'gameplay'){
     gameplay();
   } else if (state === 'ending'){
@@ -173,7 +197,23 @@ function draw() {
 
 //----- TITLE SCREEN -----
 function titleScreen(){
+  imageMode(CORNER);
+  image(imgTitle, 0, 0);
 
+  if(key === 'h'){
+    state = 'instructions';
+  } else if (key === 'p'){
+    state = 'gameplay';
+  }
+}
+
+function instructions(){
+  imageMode(CORNER);
+  image(imgHowToPlay, 0, 0);
+
+  if(key === 'b'){
+    state = 'title';
+  }
 }
 
 //----- GAMEPLAY SCREEN -----
@@ -256,21 +296,11 @@ function gameplay() {
 //----- ENDING SCREEN(S) -----
 function endScreen(endNum) {
   if(ending === 1){
-    fill(0, 0, 0);
-    rectMode(CENTER);
-    rect(width/2, height/2, width, height);
-    fill(255, 255, 255);
-    textSize(75);
-    textAlign(CENTER);
-    text('You win!', width/2, height/3);
+    imageMode(CORNER);
+    image(imgWin, 0, 0);
   } else if (ending === 2){
-    fill(0, 0, 0);
-    rectMode(CENTER);
-    rect(width/2, height/2, width, height);
-    fill(255, 255, 255);
-    textSize(75);
-    textAlign(CENTER);
-    text('You lose!', width/2, height/3);
+    imageMode(CORNER);
+    image(imgLose, 0, 0);
   }
 }
 
