@@ -1,5 +1,5 @@
 class User {
-   constructor(x, y, size) {
+   constructor(x, y, size, imageGuyL, imageGuyR, imageGirlL, imageGirlR) {
      this.x = x;
      this.y = y;
      this.size = size;
@@ -10,6 +10,10 @@ class User {
      this.alphaR = 0;
      this.avatar = "girl";
      this.rectSide = 'none';
+     this.imageGuyL = imageGuyL;
+     this.imageGuyR = imageGuyR;
+     this.imageGirlL = imageGirlL;
+     this.imageGirlR = imageGirlR;
    }
 
    //----- MOVE THE USER -----
@@ -40,19 +44,18 @@ class User {
      if(this.avatar === "guy"){
        push();
        tint(255, 255, 255, user.alphaL);
-       image(imgGuyLeft, this.x, this.y, this.size);
+       image(this.imageGuyL, this.x, this.y, this.size);
        tint(255, 255, 255, this.alphaR);
-       image(imgGuyRight, this.x, this.y, this.size);
+       image(this.imageGuyR, this.x, this.y, this.size);
        pop();
      } else if (this.avatar === "girl"){
        push();
        tint(255, 255, 255, this.alphaL);
-       image(imgGirlLeft, this.x, this.y, this.size);
+       image(this.imageGirlL, this.x, this.y, this.size);
        tint(255, 255, 255, this.alphaR);
-       image(imgGirlRight, this.x, this.y, this.size);
+       image(this.imageGirlR, this.x, this.y, this.size);
        pop();
      }
-     console.log(this.x, this.y);
    }
 
     //----- Female or male avatar -----

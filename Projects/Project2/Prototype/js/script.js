@@ -23,7 +23,7 @@ Prototype Checklist:
 let userSettings = {
   x: 50,
   y: 50,
-  size: 50
+  size: 50,
 };
 
 let maze = {
@@ -84,15 +84,26 @@ let walls;
 let imgCoin;
 let imgSpider;
 let imgDoor;
-let imgGuyLeft;
-let imgGuyRight;
-let imgGirlLeft;
-let imgGirlRight;
+let imageGuyL;
+let imageGuyR;
+let imageGirlL;
+let imageGirlR;
+
+//----- IMAGE PRELOAD -----
+function preLoad(){
+  // imgCoin = loadImage ('assets/images/gold-coin.gif');
+  // imgSpider = loadImage ('assets/images/pixel-spider.gif');
+  // imgDoor = loadImage ('assets/images/pixel-door.jpg');
+  imageGuyL = loadImage ('assets/images/pixel-guy-left.png');
+  imageGuyR = loadImage ('assets/images/pixel-guy-right.png');
+  imageGirlL = loadImage ('assets/images/pixel-girl-left.png');
+  imageGirlR = loadImage ('assets/images/pixel-girl-right.png');
+}
 
 function setup(){
   createCanvas(1000, 1000);
 
-  user = new User(userSettings);
+  user = new User(50, 50, 50, imageGuyL, imageGuyR, imageGirlL, imageGirlR);
 
   let wall1 = new Wall(100, 0, 200, 200);
   maze.walls.push(wall1);
@@ -157,19 +168,6 @@ function draw(){
   } else if (state === 'ending'){
     endScreen(ending);
   }
-}
-
-//VARIABLES INITIALIZE
-
-//----- IMAGE PRELOAD -----
-function preLoad(){
-  imgCoin = loadImage ('assets/images/gold-coin.gif');
-  imgSpider = loadImage ('assets/images/pixel-spider.gif');
-  imgDoor = loadImage ('assets/images/pixel-door.jpg');
-  imgGuyLeft = loadImage ('assets/images/pixel-guy-left.png');
-  imgGuyRight = loadImage ('assets/images/pixel-guy-right.png');
-  imgGirlLeft = loadImage ('assets/images/pixel-girl-left.png');
-  imgGirlRight = loadImage ('assets/images/pixel-girl-right.png');
 }
 
 //----- TITLE SCREEN -----
