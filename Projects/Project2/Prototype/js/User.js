@@ -4,14 +4,13 @@ class User {
      this.y = config.y;
      this.w = config.w;
      this.h = config.h;
-     this.r = this.size /2;
      this.speed = 5;
      this.color = 255;
      this.alphaL = 255;
      this.alphaR = 0;
      this.avatar = "guy";
      this.rectSide = 'none';
-     this.wallCollision = false;
+     this.hit = 'none';
      this.imageGuyL = config.imageGuyL;
      this.imageGuyR = config.imageGuyR;
      this.imageGirlL = config.imageGirlL;
@@ -20,32 +19,32 @@ class User {
 
    //----- MOVE THE USER -----
    move() {
-      if (keyIsDown(LEFT_ARROW) && this.rectSide != 'right') {
+      if (keyIsDown(LEFT_ARROW) && this.hit != 'right') {
         this.x = this.x - this.speed;
         this.x = constrain(this.x, 50, width - 50);
         //----- CHARACTER FLIP -----
         this.alphaL = 255;
         this.alphaR = 0;
-      } else if (keyIsDown(RIGHT_ARROW) && this.rectSide != 'left') {
+      } else if (keyIsDown(RIGHT_ARROW) && this.hit != 'left') {
         this.x = this.x + this.speed;
         this.x = constrain(this.x, 50, width - 50);
         //----- CHARACTER FLIP -----
         this.alphaR = 255;
         this.alphaL = 0;
-      } if (keyIsDown(UP_ARROW) && this.rectSide != 'bottom') {
+      } if (keyIsDown(UP_ARROW) && this.hit != 'bottom') {
          this.y = this.y - this.speed;
          this.y = constrain(this.y, 50, height - 50);
-       } else if (keyIsDown(DOWN_ARROW) && this.rectSide != 'top') {
+       } else if (keyIsDown(DOWN_ARROW) && this.hit != 'top') {
          this.y = this.y + this.speed;
          this.y = constrain(this.y, 50, height - 50);
        }
-       console.log(this.rectSide, this.wallCollision);
    }
 
    display() {
      //----- USER SETUP -----
      if(this.avatar === "guy"){
        push();
+       imageMode(CENTER);
        tint(255, 255, 255, user.alphaL);
        image(this.imageGuyL, this.x, this.y, this.w, this.h);
        tint(255, 255, 255, this.alphaR);
@@ -54,17 +53,13 @@ class User {
 
      } else if (this.avatar === "girl"){
        push();
+       imageMode(CENTER);
        tint(255, 255, 255, this.alphaL);
        image(this.imageGirlL, this.x, this.y, this.size);
        tint(255, 255, 255, this.alphaR);
        image(this.imageGirlR, this.x, this.y, this.size);
        pop();
      }
-     // push();
-     // rectMode(CENTER);
-     // fill(this.color);
-     // rect(this.x, this.y, this.w, this.h);
-     // pop();
    }
 
     //----- Female or male avatar -----
@@ -76,32 +71,35 @@ class User {
 
    //----- WALL COLLISION DETECTION -----
    collisionDetect(wall){
-    //tester variables
-    this.testX = this.x;
-    this.testY = this.y;
-    console.log(wall.x, wall.y, this.y, this.testY);
+     //Find out which side is closest
+     if (this.x < wall.x){ //test for left side of rect
+       this.rectSide = 'left';
+     } else if (this.x > wall.x + wall.w){ //else it's right side of rect
+       this.rectSide = 'right';
+     } if (this.y < wall.y){ //test for the top side of the rect
+       this.rectSide = 'top';
+     } else if (this.y > wall.y + wall.h){ //else it's the bottom
+       this.rectSide = 'bottom';
+     }
 
-    if (this.x < wall.x){ //test for left side of rect
-      this.testX = wall.x;
-      this.rectSide = 'left';
-    } else if (this.x > wall.x+wall.w){ //else it's right side of rect
-      this.testX = wall.x + wall.w;
-      this.rectSide = 'right';
-    } if (this.y < wall.y){ //test for the top side of the rect
-      this.testY = wall.y;
-      this.rectSide = 'top';
-    } else if (this.y > wall.y+wall.h){ //else it's the bottom
-      this.testY = wall.y + wall.h;
-      this.rectSide = 'bottom';
-    }
+     //change to poitn/rect dist
+     this.d = dist(this.x + this.w/2, this.y + this.h/2, wall.x + wall.w/2, wall.y + wall.h/2);
+     if(this.d <= wall.w/2 || this.d <= wall.h/2) {
+       wall.r = 255;
+       if(this.rectSide === 'left'){
+         this.hit = 'left';
+       } else if(this.rectSide === 'right'){
+         this.hit = 'right';
+       } else if(this.rectSide === 'top'){
+         this.hit = 'top';
+       } else if(this.rectSide === 'bottom'){
+         this.hit = 'bottom';
+       }
+     } else {
+       this.hit = 'none';
+     }
 
-    this.distX = this.x-this.testX;
-    this.distY = this.y-this.testY;
-    this.distance = sqrt( (this.distX*this.distX) + (this.distY*this.distY) );
-
-    if (this.distance <= this.r) { //if the distance is less then the radius
-      this.wallCollision = true;
-    }
+     console.log(this.hit, this.rectSide);
   }
 
   coinProximity(coin){
@@ -137,3 +135,5 @@ class User {
     }
   }
 }
+
+// console.log(this.rectSide, this.distance, this.r);

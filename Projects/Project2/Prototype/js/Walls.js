@@ -12,6 +12,7 @@ class Wall {
 
   display(){
     push();
+    rectMode(CENTER);
     fill(this.r, this.g, this.b, this.alpha);
     rect(this.x, this.y, this.w, this.h);
     pop();

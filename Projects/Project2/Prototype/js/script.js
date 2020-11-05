@@ -76,7 +76,7 @@ let imageGirlL;
 let imageGirlR;
 
 //----- IMAGE PRELOAD -----
-function preLoad(){
+function preload(){
   // imgCoin = loadImage ('assets/images/gold-coin.gif');
   // imgSpider = loadImage ('assets/images/pixel-spider.gif');
   // imgDoor = loadImage ('assets/images/pixel-door.jpg');
@@ -101,28 +101,27 @@ function setup(){
   };
   user = new User(userSettings);
 
-  let wall1 = new Wall(100, 0, 200, 200);
+  let wall1 = new Wall(200, 100, 200, 200);
   maze.walls.push(wall1);
-  let wall2 = new Wall(0, 300, 300, 200);
+  let wall2 = new Wall(150, 400, 300, 200);
   maze.walls.push(wall2);
-  let wall3 = new Wall(100, 600, 100, 300);
+  let wall3 = new Wall(150, 750, 100, 300);
   maze.walls.push(wall3);
-  let wall4 = new Wall(400, 100, 300, 300);
+  let wall4 = new Wall(550, 250, 300, 300);
   maze.walls.push(wall4);
-  let wall5 = new Wall(300, 600, 200, 400);
+  let wall5 = new Wall(400, 800, 200, 400);
   maze.walls.push(wall5);
-  let wall6 = new Wall(600, 500, 200, 200);
+  let wall6 = new Wall(700, 600, 200, 200);
   maze.walls.push(wall6);
-  let wall7 = new Wall(600, 800, 100, 200);
+  let wall7 = new Wall(700, 900, 100, 200);
   maze.walls.push(wall7);
-  let wall8 = new Wall(800, 100, 200, 200);
+  let wall8 = new Wall(900, 200, 200, 200);
   maze.walls.push(wall8);
-  let wall9 = new Wall(800, 400, 200, 500);
+  let wall9 = new Wall(900, 650, 200, 500);
   maze.walls.push(wall9);
 
   noStroke();
   textFont('Helvetica');
-  preLoad();
 
   //----- VARIABLE SETUP -----
   // coin.x = width/12;
