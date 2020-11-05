@@ -1,30 +1,26 @@
 class User {
-   constructor(x, y, size, imageGuyL, imageGuyR, imageGirlL, imageGirlR) {
-     this.x = x;
-     this.y = y;
-     this.size = size;
+   constructor(config) {
+     this.x = config.x;
+     this.y = config.y;
+     this.w = config.w;
+     this.h = config.h;
      this.r = this.size /2;
      this.speed = 5;
      this.color = 255;
      this.alphaL = 255;
      this.alphaR = 0;
-     this.avatar = "girl";
+     this.avatar = "guy";
      this.rectSide = 'none';
-     this.imageGuyL = imageGuyL;
-     this.imageGuyR = imageGuyR;
-     this.imageGirlL = imageGirlL;
-     this.imageGirlR = imageGirlR;
+     this.wallCollision = false;
+     this.imageGuyL = config.imageGuyL;
+     this.imageGuyR = config.imageGuyR;
+     this.imageGirlL = config.imageGirlL;
+     this.imageGirlR = config.imageGirlR;
    }
 
    //----- MOVE THE USER -----
    move() {
-     if (keyIsDown(UP_ARROW) && this.rectSide != 'bottom') {
-        this.y = this.y - this.speed;
-        this.y = constrain(this.y, 50, height - 50);
-      } else if (keyIsDown(DOWN_ARROW) && this.rectSide != 'top') {
-        this.y = this.y + this.speed;
-        this.y = constrain(this.y, 50, height - 50);
-      } else if (keyIsDown(LEFT_ARROW) && this.rectSide != 'right') {
+      if (keyIsDown(LEFT_ARROW) && this.rectSide != 'right') {
         this.x = this.x - this.speed;
         this.x = constrain(this.x, 50, width - 50);
         //----- CHARACTER FLIP -----
@@ -36,7 +32,14 @@ class User {
         //----- CHARACTER FLIP -----
         this.alphaR = 255;
         this.alphaL = 0;
-      }
+      } if (keyIsDown(UP_ARROW) && this.rectSide != 'bottom') {
+         this.y = this.y - this.speed;
+         this.y = constrain(this.y, 50, height - 50);
+       } else if (keyIsDown(DOWN_ARROW) && this.rectSide != 'top') {
+         this.y = this.y + this.speed;
+         this.y = constrain(this.y, 50, height - 50);
+       }
+       console.log(this.rectSide, this.wallCollision);
    }
 
    display() {
@@ -48,6 +51,7 @@ class User {
        tint(255, 255, 255, this.alphaR);
        image(this.imageGuyR, this.x, this.y, this.size);
        pop();
+
      } else if (this.avatar === "girl"){
        push();
        tint(255, 255, 255, this.alphaL);
@@ -56,6 +60,11 @@ class User {
        image(this.imageGirlR, this.x, this.y, this.size);
        pop();
      }
+     // push();
+     // rectMode(CENTER);
+     // fill(this.color);
+     // rect(this.x, this.y, this.w);
+     // pop();
    }
 
     //----- Female or male avatar -----
@@ -67,9 +76,10 @@ class User {
 
    //----- WALL COLLISION DETECTION -----
    collisionDetect(wall){
-    //tester variables
+    tester variables
     this.testX = this.x;
     this.testY = this.y;
+    console.log(wall.x, wall.y, this.y, this.testY);
 
     if (this.x < wall.x){ //test for left side of rect
       this.testX = wall.x;
@@ -89,8 +99,8 @@ class User {
     this.distY = this.y-this.testY;
     this.distance = sqrt( (this.distX*this.distX) + (this.distY*this.distY) );
 
-    if (this.distance > this.r) { //if the distance is less then the radius
-      rectSide = 'none';
+    if (this.distance <= this.r) { //if the distance is less then the radius
+      this.wallCollision = true;
     }
   }
 

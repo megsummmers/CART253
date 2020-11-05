@@ -20,12 +20,6 @@ Prototype Checklist:
 **************************************************/
 "use strict";
 
-let userSettings = {
-  x: 50,
-  y: 50,
-  size: 50,
-};
-
 let maze = {
   walls: [],
   numWalls: 9,
@@ -46,14 +40,6 @@ let bg = {
   rg: 25,
   rb: 25
 };
-
-// let enemy = {
-//   x: 0, y: 0, pathTop: 0, pathBottom: 0, alpha: 255,
-//   x2: 0, y2: 0, pathTop2: 0, pathBottom2: 0, alpha2: 255,
-//   size: 100,
-//   speed: 5,
-//   color: 255,
-// };
 
 // let door = {
 //   x: 10, y: 5,
@@ -103,7 +89,17 @@ function preLoad(){
 function setup(){
   createCanvas(1000, 1000);
 
-  user = new User(50, 50, 50, imageGuyL, imageGuyR, imageGirlL, imageGirlR);
+  let userSettings = {
+    x: 50,
+    y: 50,
+    w: 50,
+    h: 65,
+    imageGuyL: imageGuyL,
+    imageGuyR: imageGuyR,
+    imageGirlL: imageGirlL,
+    imageGirlR: imageGirlR
+  };
+  user = new User(userSettings);
 
   let wall1 = new Wall(100, 0, 200, 200);
   maze.walls.push(wall1);
@@ -282,6 +278,7 @@ function gameplay(){
 
   //----- USER SETUP ----
   user.display();
+  user.move();
 
   //----- WALL COLLISION SETUP -----
   for(let i = 0; i < maze.walls.length; i++){
@@ -289,8 +286,6 @@ function gameplay(){
     user.collisionDetect(wall);
     wall.display();
   }
-
-  user.move();
 
   //----- GAME END -----
 //   if (coinCount === 1 && user.x <= width/9 && user.y <= height/9){

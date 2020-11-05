@@ -11,8 +11,9 @@ class Wall {
   }
 
   display(){
-    rectMode(CORNER);
+    push();
     fill(this.r, this.g, this.b, this.alpha);
     rect(this.x, this.y, this.w, this.h);
+    pop();
   }
 }
