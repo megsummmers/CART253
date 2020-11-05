@@ -77,8 +77,8 @@ let imageGirlR;
 
 //----- IMAGE PRELOAD -----
 function preload(){
-  // imgCoin = loadImage ('assets/images/gold-coin.gif');
-  // imgSpider = loadImage ('assets/images/pixel-spider.gif');
+  imgCoin = loadImage ('assets/images/gold-coin.gif');
+  imgSpider = loadImage ('assets/images/pixel-spider.gif');
   // imgDoor = loadImage ('assets/images/pixel-door.jpg');
   imageGuyL = loadImage ('assets/images/pixel-guy-left.png');
   imageGuyR = loadImage ('assets/images/pixel-guy-right.png');
@@ -123,44 +123,26 @@ function setup(){
   maze.walls.push(wall9);
 
   //Coin Initialization
-  let coin1 = new Coin(50, 850);
+  let coin1 = new Coin(50, 850, imgCoin);
   maze.coins.push(coin1);
-  let coin2 = new Coin(550, 950);
+  let coin2 = new Coin(550, 950, imgCoin);
   maze.coins.push(coin2);
-  let coin3 = new Coin(950, 50);
+  let coin3 = new Coin(950, 50, imgCoin);
   maze.coins.push(coin3);
-  let coin4 = new Coin(950, 350);
+  let coin4 = new Coin(950, 350, imgCoin);
   maze.coins.push(coin4);
-  let coin5 = new Coin(950, 950);
+  let coin5 = new Coin(950, 950, imgCoin);
   maze.coins.push(coin5);
 
   //Spider Initialization
-  let spider1 = new Spider(350, 50, 50, 550);
+  let spider1 = new Spider(350, 50, 50, 550, imgSpider);
   maze.spiders.push(spider1);
-  let spider2 = new Spider(550, 450, 950, 450);
+  let spider2 = new Spider(550, 450, 450, 950, imgSpider);
   maze.spiders.push(spider2);
-  let spider3 = new Spider(750, 50, 50, 450);
+  let spider3 = new Spider(750, 50, 50, 450, imgSpider);
   maze.spiders.push(spider3);
 
   //----- VARIABLE SETUP -----
-  // coin.x = width/12;
-  // coin.y = height - height/12;
-  // coin.x2 = width/2 + width/12;
-  // coin.y2 = height/12;
-  // coin.x3 = width/2 + width/12;
-  // coin.y3 = height - height/12;
-  // coin.x4 = width - width/3;
-  // coin.y4 = height/2 - height/12;
-  // coin.x5 = width - width/12;
-  // coin.y5 = height - height/12;
-  // enemy.x = width/3 + width/12;
-  // enemy.y = height/12;
-  // enemy.pathTop = height/12;
-  // enemy.pathBottom = height - height/12;
-  // enemy.x2 = width - width/12;
-  // enemy.y2 = height/6;
-  // enemy.pathTop2 = height/6;
-  // enemy.pathBottom2 = height - height/6;
   // girlCircle.x = width/3;
   // boyCircle.x = width/3 + width/3;
   // girlCircle.y = height/2;
@@ -303,6 +285,17 @@ function gameplay(){
     let wall = maze.walls[i];
     user.collisionDetect(wall);
     wall.display();
+  }
+
+  for(let i = 0; i < maze.coins.length; i++){
+    let coin = maze.coins[i];
+    coin.display();
+  }
+
+  for(let i = 0; i < maze.spiders.length; i++){
+    let spider = maze.spiders[i];
+    spider.display();
+    spider.move();
   }
 
   //----- USER SETUP ----

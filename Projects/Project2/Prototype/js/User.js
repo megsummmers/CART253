@@ -34,12 +34,12 @@ class User {
         this.alphaR = 255;
         this.alphaL = 0;
       } if (keyIsDown(UP_ARROW) && !this.hitBottom) {
-         this.y = this.y - this.speed;
-         this.y = constrain(this.y, 20, height - 20);
-       } else if (keyIsDown(DOWN_ARROW) && !this.hitTop) {
-         this.y = this.y + this.speed;
-         this.y = constrain(this.y, 20, height - 20);
-       }
+        this.y = this.y - this.speed;
+        this.y = constrain(this.y, 20, height - 20);
+      } else if (keyIsDown(DOWN_ARROW) && !this.hitTop) {
+        this.y = this.y + this.speed;
+        this.y = constrain(this.y, 20, height - 20);
+      }
    }
 
    display() {
@@ -83,7 +83,7 @@ class User {
      } else if (this.y > wall.y + wall.h){ //else it's the bottom
        this.rectSide = 'bottom';
      }
-
+     console.log(this.rectSide, this.hitBottom, this.hit);
      //check for overlap in walls
      if(this.x + this.w > wall.x &&
         this.x < wall.x + wall.w &&

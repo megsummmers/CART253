@@ -1,13 +1,14 @@
 class Spider {
-  constructor(x, y, pathStart, pathEnd){
+  constructor(x, y, pathStart, pathEnd, imgSpider){
     this.x = x;
     this.y = y;
     this.pathStart = pathStart;
     this.pathEnd = pathEnd;
     this.speed = 5;
     this.size = 50;
-    this.alpha = 0;
+    this.alpha = 255;
     this.color = 255;
+    this.image = imgSpider;
   }
 
   move(){
