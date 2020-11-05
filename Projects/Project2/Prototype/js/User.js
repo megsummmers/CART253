@@ -47,9 +47,9 @@ class User {
      if(this.avatar === "guy"){
        push();
        tint(255, 255, 255, user.alphaL);
-       image(this.imageGuyL, this.x, this.y, this.size);
+       image(this.imageGuyL, this.x, this.y, this.w, this.h);
        tint(255, 255, 255, this.alphaR);
-       image(this.imageGuyR, this.x, this.y, this.size);
+       image(this.imageGuyR, this.x, this.y, this.w, this.h);
        pop();
 
      } else if (this.avatar === "girl"){
@@ -63,7 +63,7 @@ class User {
      // push();
      // rectMode(CENTER);
      // fill(this.color);
-     // rect(this.x, this.y, this.w);
+     // rect(this.x, this.y, this.w, this.h);
      // pop();
    }
 
