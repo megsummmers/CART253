@@ -76,7 +76,7 @@ class User {
 
    //----- WALL COLLISION DETECTION -----
    collisionDetect(wall){
-    tester variables
+    //tester variables
     this.testX = this.x;
     this.testY = this.y;
     console.log(wall.x, wall.y, this.y, this.testY);
