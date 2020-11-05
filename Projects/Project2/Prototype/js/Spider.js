@@ -1,5 +1,5 @@
 class Spider {
-  constructor(x, y){
+  constructor(x, y, pathStart, pathEnd){
     this.x = x;
     this.y = y;
     this.pathStart = pathStart;

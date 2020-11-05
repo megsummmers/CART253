@@ -9,8 +9,10 @@ class User {
      this.alphaL = 255;
      this.alphaR = 0;
      this.avatar = "guy";
-     this.rectSide = 'none';
-     this.hit = 'none';
+     this.hitLeft = false;
+     this.hitRight = false;
+     this.hitTop = false;
+     this.hitBottom = false;
      this.imageGuyL = config.imageGuyL;
      this.imageGuyR = config.imageGuyR;
      this.imageGirlL = config.imageGirlL;
@@ -19,24 +21,24 @@ class User {
 
    //----- MOVE THE USER -----
    move() {
-      if (keyIsDown(LEFT_ARROW) && this.hit != 'right') {
+      if (keyIsDown(LEFT_ARROW) && !this.hitRight) {
         this.x = this.x - this.speed;
-        this.x = constrain(this.x, 50, width - 50);
+        this.x = constrain(this.x, 20, width - 20);
         //----- CHARACTER FLIP -----
         this.alphaL = 255;
         this.alphaR = 0;
-      } else if (keyIsDown(RIGHT_ARROW) && this.hit != 'left') {
+      } else if (keyIsDown(RIGHT_ARROW) && !this.hitLeft) {
         this.x = this.x + this.speed;
-        this.x = constrain(this.x, 50, width - 50);
+        this.x = constrain(this.x, 20, width - 20);
         //----- CHARACTER FLIP -----
         this.alphaR = 255;
         this.alphaL = 0;
-      } if (keyIsDown(UP_ARROW) && this.hit != 'bottom') {
+      } if (keyIsDown(UP_ARROW) && !this.hitBottom) {
          this.y = this.y - this.speed;
-         this.y = constrain(this.y, 50, height - 50);
-       } else if (keyIsDown(DOWN_ARROW) && this.hit != 'top') {
+         this.y = constrain(this.y, 20, height - 20);
+       } else if (keyIsDown(DOWN_ARROW) && !this.hitTop) {
          this.y = this.y + this.speed;
-         this.y = constrain(this.y, 50, height - 50);
+         this.y = constrain(this.y, 20, height - 20);
        }
    }
 
@@ -44,7 +46,7 @@ class User {
      //----- USER SETUP -----
      if(this.avatar === "guy"){
        push();
-       imageMode(CENTER);
+       //imageMode(CENTER);
        tint(255, 255, 255, user.alphaL);
        image(this.imageGuyL, this.x, this.y, this.w, this.h);
        tint(255, 255, 255, this.alphaR);
@@ -53,7 +55,7 @@ class User {
 
      } else if (this.avatar === "girl"){
        push();
-       imageMode(CENTER);
+       //imageMode(CENTER);
        tint(255, 255, 255, this.alphaL);
        image(this.imageGirlL, this.x, this.y, this.size);
        tint(255, 255, 255, this.alphaR);
@@ -82,24 +84,27 @@ class User {
        this.rectSide = 'bottom';
      }
 
-     //change to poitn/rect dist
-     this.d = dist(this.x + this.w/2, this.y + this.h/2, wall.x + wall.w/2, wall.y + wall.h/2);
-     if(this.d <= wall.w/2 || this.d <= wall.h/2) {
+     //check for overlap in walls
+     if(this.x + this.w > wall.x &&
+        this.x < wall.x + wall.w &&
+        this.y + this.h > wall.y &&
+        this.y < wall.y + wall.h
+      ){
+        //if there is overlap set hit to which side the overlap is on
        wall.r = 255;
        if(this.rectSide === 'left'){
-         this.hit = 'left';
+         this.hitLeft = true;
        } else if(this.rectSide === 'right'){
-         this.hit = 'right';
+         this.hitRight = true;
        } else if(this.rectSide === 'top'){
-         this.hit = 'top';
+         this.hitTop = true;
        } else if(this.rectSide === 'bottom'){
-         this.hit = 'bottom';
+         this.hitBottom = true;
        }
      } else {
+       //no overlap, sets hit to none
        this.hit = 'none';
      }
-
-     console.log(this.hit, this.rectSide);
   }
 
   coinProximity(coin){
@@ -135,5 +140,3 @@ class User {
     }
   }
 }
-
-// console.log(this.rectSide, this.distance, this.r);

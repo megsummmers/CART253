@@ -88,10 +88,11 @@ function preload(){
 
 function setup(){
   createCanvas(1000, 1000);
+  noStroke();
 
   let userSettings = {
-    x: 50,
-    y: 50,
+    x: 20,
+    y: 20,
     w: 50,
     h: 65,
     imageGuyL: imageGuyL,
@@ -101,27 +102,45 @@ function setup(){
   };
   user = new User(userSettings);
 
-  let wall1 = new Wall(200, 100, 200, 200);
+  //Wall Initialization
+  let wall1 = new Wall(100, 0, 200, 200);
   maze.walls.push(wall1);
-  let wall2 = new Wall(150, 400, 300, 200);
+  let wall2 = new Wall(0, 300, 300, 200);
   maze.walls.push(wall2);
-  let wall3 = new Wall(150, 750, 100, 300);
+  let wall3 = new Wall(100, 600, 100, 300);
   maze.walls.push(wall3);
-  let wall4 = new Wall(550, 250, 300, 300);
+  let wall4 = new Wall(400, 100, 300, 300);
   maze.walls.push(wall4);
-  let wall5 = new Wall(400, 800, 200, 400);
+  let wall5 = new Wall(300, 600, 200, 400);
   maze.walls.push(wall5);
-  let wall6 = new Wall(700, 600, 200, 200);
+  let wall6 = new Wall(600, 500, 200, 200);
   maze.walls.push(wall6);
-  let wall7 = new Wall(700, 900, 100, 200);
+  let wall7 = new Wall(600, 800, 100, 200);
   maze.walls.push(wall7);
-  let wall8 = new Wall(900, 200, 200, 200);
+  let wall8 = new Wall(800, 100, 200, 200);
   maze.walls.push(wall8);
-  let wall9 = new Wall(900, 650, 200, 500);
+  let wall9 = new Wall(800, 400, 200, 500);
   maze.walls.push(wall9);
 
-  noStroke();
-  textFont('Helvetica');
+  //Coin Initialization
+  let coin1 = new Coin(50, 850);
+  maze.coins.push(coin1);
+  let coin2 = new Coin(550, 950);
+  maze.coins.push(coin2);
+  let coin3 = new Coin(950, 50);
+  maze.coins.push(coin3);
+  let coin4 = new Coin(950, 350);
+  maze.coins.push(coin4);
+  let coin5 = new Coin(950, 950);
+  maze.coins.push(coin5);
+
+  //Spider Initialization
+  let spider1 = new Spider(350, 50, 50, 550);
+  maze.spiders.push(spider1);
+  let spider2 = new Spider(550, 450, 950, 450);
+  maze.spiders.push(spider2);
+  let spider3 = new Spider(750, 50, 50, 450);
+  maze.spiders.push(spider3);
 
   //----- VARIABLE SETUP -----
   // coin.x = width/12;
@@ -275,16 +294,20 @@ function gameplay(){
   //----- EXIT DOOR SETUP -----
   //image(imgDoor, door.x, door.y, door.w, door.h);
 
-  //----- USER SETUP ----
-  user.display();
-  user.move();
-
   //----- WALL COLLISION SETUP -----
+  user.hitLeft = false;
+  user.hitRight = false;
+  user.hitTop = false;
+  user.hitBottom = false;
   for(let i = 0; i < maze.walls.length; i++){
     let wall = maze.walls[i];
     user.collisionDetect(wall);
     wall.display();
   }
+
+  //----- USER SETUP ----
+  user.display();
+  user.move();
 
   //----- GAME END -----
 //   if (coinCount === 1 && user.x <= width/9 && user.y <= height/9){
