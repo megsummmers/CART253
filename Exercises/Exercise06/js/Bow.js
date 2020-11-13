@@ -48,13 +48,12 @@ class Bow {
     }
     //alpha proximity
     if(d <= 25){
-      this.alphaL = 0;
       this.bowTaken = true;
       this.x = user.x;
       this.y = user.y;
     } else if (d > 300 && !this.bowTaken){
       this.alphaL -= 20;
-      this.alphaL = constrain(this.alpha, 0, 255);
+      this.alphaL = constrain(this.alphaL, 0, 255);
     } else if (d < 300 && !this.bowTaken){
       this.alphaL += 20;
       this.alphaL = constrain(this.alphaL, 0, 255);
@@ -62,26 +61,6 @@ class Bow {
   }
 
   display(user){
-    // push();
-    // //rotate with user (around bow coordinates)
-    // translate(width/2, height/2);
-    // angleMode(DEGREES);
-    // rotate(user.bowRotate);
-    // //bow
-    // imageMode(CENTER);
-    // tint(this.color, this.color, this.color, this.alpha);
-    // image(this.imageBow, this.x, this.y, this.size, this.size);
-    // pop();
-    // push();
-    // //rotate with user (around arrow coordinates)
-    // translate(this.arrowX, this.arrowY);
-    // angleMode(DEGREES);
-    // rotate(user.bowRotate);
-    // //arrow
-    // imageMode(CENTER);
-    // tint(this.color, this.color, this.color, this.arrowAlpha);
-    // image(this.imageArrow, this.arrowX, this.arrowY, this.size, this.size);
-    // pop();
     push();
     //bow left
     imageMode(CENTER);

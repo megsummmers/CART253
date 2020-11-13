@@ -9,9 +9,11 @@ Current Ideas:
 **************************************************/
 
 let targets = [];
+let balls = [];
 let notes = ['F3', 'G3', 'Ab4', 'Bb4', 'C4', 'Db4', 'Eb4', 'F5'];
 let numofTargets = 2;
 let targetsHit = 0;
+let totalTargetsHit = 0;
 let arrowHit = true;
 let arrowOsc;
 let playing = false;
@@ -32,7 +34,7 @@ let imgArrowD;
 let user;
 let target;
 let bow;
-//
+let ball;
 
 function preload(){
   imgBowL = loadImage ('assets/images/bow&arrowL.png');
@@ -49,11 +51,10 @@ function preload(){
 // Description of setup() goes here.
 function setup() {
   createCanvas(1000, windowHeight);
-  noStroke();
 
   user = new User(width/2, height/2);
   for (let i = 0; i <= numofTargets; i++){
-    let rSpeed = random(3, 7);
+    let rSpeed = random(5, 8);
     let rY = random(150, 850);
     let rR = random(100, 230);
     let rG = random(100, 230);
@@ -81,6 +82,24 @@ function setup() {
 function draw() {
   background(0, 0, 0);
 
+  console.log(targetsHit);
+  //adds a ball after 10 targets hit
+  if(targetsHit >= 10){
+    //reset counter
+    targetsHit = 0;
+    //add a ball
+    let note = random(notes);
+    ball = new Ball(width/2, height/2, note);
+    balls.push(ball);
+  }
+  //ball class call
+  for (let i = 0; i < balls.length; i++){
+    let ball = balls[i];
+    ball.move();
+    ball.display();
+    ball.bounce();
+  }
+
   //user class call
   user.move(bow);
   user.display();
@@ -89,7 +108,6 @@ function draw() {
     for (let i = 0; i < targets.length; i++){
       let target = targets[i];
       target.move();
-      //target.proximity(user);
       target.display();
       bullseyeCheck(target);
     }
@@ -179,6 +197,7 @@ function bullseyeCheck(target){
     if (target.targetHit){
       let note = random(notes);
       target.playNote(note);
+      totalTargetsHit += 1;
     }
     target.x = -150;
     target.y = random(150, 850);
