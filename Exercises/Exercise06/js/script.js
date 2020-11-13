@@ -9,13 +9,21 @@ Current Ideas:
 **************************************************/
 
 let targets = [];
+let notes = ['F3', 'G3', 'Ab4', 'Bb4', 'C4', 'Db4', 'Eb4', 'F5'];
 let numofTargets = 2;
 let targetsHit = 0;
 let arrowHit = true;
-let nearFreq = 500;
-let farFreq = 200;
+let arrowOsc;
+let playing = false;
+let nearFreq = 440;
+let farFreq = 350;
+let nearAmp = 0.2;
+let farAmp = 0;
 //image variables
-let imgBow;
+let imgBowL;
+let imgBowR;
+let imgBowU;
+let imgBowD;
 let imgArrowL;
 let imgArrowR;
 let imgArrowU;
@@ -24,9 +32,13 @@ let imgArrowD;
 let user;
 let target;
 let bow;
+//
 
 function preload(){
-  imgBow = loadImage ('assets/images/bow&arrow.png');
+  imgBowL = loadImage ('assets/images/bow&arrowL.png');
+  imgBowR = loadImage ('assets/images/bow&arrowR.png');
+  imgBowU = loadImage ('assets/images/bow&arrowU.png');
+  imgBowD = loadImage ('assets/images/bow&arrowD.png');
   imgArrowL = loadImage ('assets/images/arrowL.png');
   imgArrowR = loadImage ('assets/images/arrowR.png');
   imgArrowU = loadImage ('assets/images/arrowU.png');
@@ -37,6 +49,8 @@ function preload(){
 // Description of setup() goes here.
 function setup() {
   createCanvas(1000, windowHeight);
+  noStroke();
+
   user = new User(width/2, height/2);
   for (let i = 0; i <= numofTargets; i++){
     let rSpeed = random(3, 7);
@@ -49,8 +63,15 @@ function setup() {
   }
   let rX = random(150, 850);
   let rY = random(150, 850);
-  bow = new Bow(rX, rY, imgBow, imgArrowL, imgArrowR, imgArrowU, imgArrowD);
+  bow = new Bow(rX, rY, imgBowL, imgBowR, imgBowU, imgBowD, imgArrowL, imgArrowR, imgArrowU, imgArrowD);
 
+  arrowOsc = new p5.Oscillator();
+  let d = dist(user.x, user.y, bow.arrowX, bow.arrowY);
+  let maxDist = dist(0, 0, width, height);
+  let newFreq = map(d, 0, maxDist, nearFreq, farFreq);
+  //let newAmp = map(d, 0, maxDist, nearAmp, farAmp);
+  arrowOsc.freq(440);
+  arrowOsc.amp(0.02);
   userStartAudio();
 }
 
@@ -64,16 +85,15 @@ function draw() {
   user.move(bow);
   user.display();
   //target class call
-  for (let i = 0; i < targets.length; i++){
-    let target = targets[i];
-    target.move();
-    //target.proximity(user);
-    target.display();
-    bullseyeCheck(target);
+  if (bow.bowTaken){
+    for (let i = 0; i < targets.length; i++){
+      let target = targets[i];
+      target.move();
+      //target.proximity(user);
+      target.display();
+      bullseyeCheck(target);
+    }
   }
-  // target.move();
-  // target.display();
-  // bullseyeCheck();
   //bow class call
   bow.proximity(user);
   bow.display(user);
@@ -81,29 +101,20 @@ function draw() {
   if (arrowHit){
     bow.arrowX = user.x;
     bow.arrowY = user.y;
+    arrowOsc.stop();
   }
 
   //arrow is shot
   if (keyCode === 32 || !arrowHit){
     shoot();
+    arrowOsc.start();
     keyCode = 34;
   }
 }
 
 function shoot(){
-  //oscillator
-  bow.arrowProximity(user, arrowHit);
-
   //checks if arrow is within the canvas
   if(bow.arrowX < width && bow.arrowX > 0 && bow.arrowY < height && bow.arrowY > 0 && bow.bowTaken){
-    //arrow flying sound
-    // let dU = dist(bow.arrowX, bow.arrowY, user.x, user.y);
-    // let maxDist = dist(0, 0, width, height);
-    // let newFreq = map(dU, 0, maxDist, nearFreq, farFreq);
-    // arrowOscillator.freq(newFreq);
-    // arrowOscillator.amp(0.025);
-    // arrowOscillator.start();
-
     //arrow animation based on user's direction
     if (user.bowRotate === 0){
       bow.arrowAlphaL = 255;
@@ -134,7 +145,7 @@ function shoot(){
     for (let i = 0; i <= targets.length - 1; i++){
       let target = targets[i];
       let dT = dist(bow.arrowX, bow.arrowY, target.x, target.y)
-      if(dT < 50 && !target.targetHit){
+      if(dT < 100 && !target.targetHit){
         //resets target
         bullseyeCheck(target);
         targetsHit = targetsHit + 1;
@@ -164,6 +175,11 @@ function shoot(){
 
 function bullseyeCheck(target){
   if (target.x >= 1150 || target.targetHit){
+    //play note if hit
+    if (target.targetHit){
+      let note = random(notes);
+      target.playNote(note);
+    }
     target.x = -150;
     target.y = random(150, 850);
     target.targetHit = false;

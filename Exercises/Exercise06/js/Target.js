@@ -12,6 +12,8 @@ class Target {
     this.alpha = 255;
     this.speed = speed;
     this.targetHit = false;
+    //Synth
+    this.synth = new p5.PolySynth();
   }
 
   move(){
@@ -29,6 +31,10 @@ class Target {
       this.alpha += 20;
       this.alpha = constrain(this.alpha, 0, 255);
     }
+  }
+
+  playNote(note){
+    this.synth.play(note, 0.4, 0, 0.1);
   }
 
   display(){

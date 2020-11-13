@@ -10,22 +10,50 @@ class User {
     this.bowRotate = "none";
   }
 
-  move(){
+  move(bow){
     if (keyIsDown(LEFT_ARROW)){
       this.vx = -this.speed;
       this.bowRotate = 0;
+      //change bow image (rotate it)
+      if(bow.bowTaken){
+        bow.alphaL = 255;
+        bow.alphaR = 0;
+        bow.alphaU = 0;
+        bow.alphaD = 0;
+      }
     } else if (keyIsDown(RIGHT_ARROW)){
       this.vx = this.speed;
       this.bowRotate = 180;
+      //change bow image (rotate it)
+      if(bow.bowTaken){
+        bow.alphaL = 0;
+        bow.alphaR = 255;
+        bow.alphaU = 0;
+        bow.alphaD = 0;
+      }
     } else {
       this.vx = 0;
     }
     if (keyIsDown(UP_ARROW)){
       this.vy = -this.speed;
       this.bowRotate = 90;
+      //change bow image (rotate it)
+      if(bow.bowTaken){
+        bow.alphaL = 0;
+        bow.alphaR = 0;
+        bow.alphaU = 255;
+        bow.alphaD = 0;
+      }
     } else if (keyIsDown(DOWN_ARROW)){
       this.vy = this.speed;
       this.bowRotate = 270;
+      //change bow image (rotate it)
+      if(bow.bowTaken){
+        bow.alphaL = 0;
+        bow.alphaR = 0;
+        bow.alphaU = 0;
+        bow.alphaD = 255;
+      }
     } else {
       this.vy = 0;
     }
