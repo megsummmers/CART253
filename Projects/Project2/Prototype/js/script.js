@@ -403,7 +403,6 @@ function gameplay(){
   //checks if you can shoot
   if(key === 'a' && weapon.bowTaken === true && weapon.arrows >= 1){
     //sets arrow to user's position and allows entry to function
-    console.log(weapon.arrows);
     weapon.arrowX = user.x;
     weapon.arrowY = user.y + 40;
     arrowHit = false;
