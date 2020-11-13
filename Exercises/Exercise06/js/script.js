@@ -52,6 +52,7 @@ function preload(){
 function setup() {
   createCanvas(1000, windowHeight);
 
+
   user = new User(width/2, height/2);
   for (let i = 0; i <= numofTargets; i++){
     let rSpeed = random(5, 8);
@@ -127,6 +128,26 @@ function draw() {
     shoot();
     arrowOsc.start();
     keyCode = 34;
+  }
+
+  //How to play text
+  if (!bow.bowTaken){
+    push();
+    fill(255);
+    textAlign(CENTER);
+    textSize(40);
+    text("Find your bow and arrow in the darkness", width/2, height/3);
+    text("The pitch will get higher the closer you get to it", width/2, height/3 +50);
+    pop();
+  } else {
+    push();
+    fill(255);
+    textAlign(CENTER);
+    textSize(40);
+    text("Use spacebar to shoot your arrows at the colourful targets", width/2, height - 100);
+    textSize(25);
+    text("Every 10 targets hit a ball will appear to bounce around and join your song", width/2, height - 50);
+    pop();
   }
 }
 
