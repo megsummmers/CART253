@@ -122,7 +122,7 @@ function setup(){
 
   weapon = new Bow(650, 50, imgWeapon, imgArrowL, imgArrowR);
 
-  //Wall Initialization
+  //Wall Initialization level 1
   let wall1 = new Wall(100, 0, 200, 200);
   maze.walls.push(wall1);
   let wall2 = new Wall(0, 300, 300, 200);

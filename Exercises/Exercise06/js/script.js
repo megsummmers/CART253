@@ -155,7 +155,7 @@ function shoot(){
   //checks if arrow is within the canvas
   if(bow.arrowX < width && bow.arrowX > 0 && bow.arrowY < height && bow.arrowY > 0 && bow.bowTaken){
     //arrow animation based on user's direction
-    if (user.bowRotate === 0){
+    if (user.bowRotate === 0t){
       bow.arrowAlphaL = 255;
       bow.arrowAlphaU = 0;
       bow.arrowAlphaR = 0;
