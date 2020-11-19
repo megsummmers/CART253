@@ -11,6 +11,7 @@ class User {
      this.color = 255;
      this.alphaL = 255;
      this.alphaR = 0;
+     this.moved = false;
      this.avatar = "guy";
      this.hitLeft = false;
      this.hitRight = false;
@@ -29,12 +30,14 @@ class User {
      //Changes to left facing avatar image
      this.alphaL = 255;
      this.alphaR = 0;
+     this.moved = true;
    }
    else if (keyIsDown(RIGHT_ARROW) && !this.hitLeft) {
      this.vx = this.speed;
      //Changes to right facing avatar image
      this.alphaR = 255;
      this.alphaL = 0;
+     this.moved = true;
    }
    else {
      this.vx = 0;
@@ -42,9 +45,11 @@ class User {
 
    if (keyIsDown(UP_ARROW) && !this.hitBottom) {
      this.vy = -this.speed;
+     this.moved = true;
    }
    else if (keyIsDown(DOWN_ARROW) && !this.hitTop) {
      this.vy = this.speed;
+     this.moved = true;
    }
    else {
      this.vy = 0;
