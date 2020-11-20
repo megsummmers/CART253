@@ -65,6 +65,12 @@ let boyCircle = {
   color: 255
 };
 
+let spiderSettings = {
+  fastSpeed: 5, medSpeed: 4, slowSpeed: 3,
+  movementH: "horizontal", movementV: "vertical",
+  killCount: 0
+};
+
 //variables
 let state = "title";
 let ending = 0;
@@ -73,16 +79,16 @@ let user;
 let walls;
 let weapon;
 let arrowHit = true;
-let page = 1;
+let page = 1; //For title screen
 let mousePress;
-let spiderKillCount = 0;
-let winPlay = false;
-let losePlay = false;
+let winSoundPlay = false;
+let loseSoundPlay = false;
 let bowPlay = false;
 let level = 1;
-let spiderH = "horizontal";
-let spiderV = "vertical";
-//image VARIABLES
+//timer variables
+let frameCounter = 0;
+let gameplayTimer = 0;
+//image Variables
 let imgCoin;
 let imgSpider;
 let imgDoor;
@@ -94,6 +100,7 @@ let imgWeapon;
 let imgArrowL;
 let imgArrowR;
 let imgbgDay;
+//sound variables
 let winSound;
 let loseSound;
 let bowPickup;
@@ -195,11 +202,11 @@ function setup(){
   maze2.walls.push(wall2_18);
   let wall2_19 = new Wall(900, 300, 100, 350);
   maze2.walls.push(wall2_19);
-  let wall2_20 = new Wall(750, 600, 200, 500);
+  let wall2_20 = new Wall(750, 600, 100, 300);
   maze2.walls.push(wall2_20);
   let wall2_21 = new Wall(850, 700, 100, 200);
   maze2.walls.push(wall2_21);
-  let wall2_22 = new Wall(750, 950, 100, 50);
+  let wall2_22 = new Wall(750, 950, 150, 50);
   maze2.walls.push(wall2_22);
   let wall2_23 = new Wall(850, 900, 50, 100);
   maze2.walls.push(wall2_23);
@@ -231,19 +238,19 @@ function setup(){
   maze2.coins.push(coin2_6);
 
   //Level 1 Spider Initialization
-  let spider1_1 = new Spider(350, 50, 50, 550, spiderV, imgSpider);
+  let spider1_1 = new Spider(350, 50, 50, 550, spiderSettings.movementV, spiderSettings.fastSpeed, imgSpider);
   maze1.spiders.push(spider1_1);
-  let spider1_2 = new Spider(550, 450, 450, 950, spiderV, imgSpider);
+  let spider1_2 = new Spider(550, 450, 450, 950, spiderSettings.movementV, spiderSettings.slowSpeed, imgSpider);
   maze1.spiders.push(spider1_2);
-  let spider1_3 = new Spider(750, 50, 50, 450, spiderV, imgSpider);
+  let spider1_3 = new Spider(750, 50, 50, 450, spiderSettings.movementV, spiderSettings.fastSpeed, imgSpider);
   maze1.spiders.push(spider1_3);
 
   //Level 1 Spider Initialization
-  let spider2_1 = new Spider(525, 100, 125, 575, spiderV, imgSpider);
+  let spider2_1 = new Spider(525, 125, 125, 575, spiderSettings.movementV, spiderSettings.fastSpeed, imgSpider);
   maze2.spiders.push(spider2_1);
-  let spider2_2 = new Spider(525, 350, 525, 75, spiderH, imgSpider);
+  let spider2_2 = new Spider(75, 325, 75, 525, spiderSettings.movementH, spiderSettings.fastSpeed, imgSpider);
   maze2.spiders.push(spider2_2);
-  let spider2_3 = new Spider(725, 475, 475, 975, spiderV, imgSpider);
+  let spider2_3 = new Spider(725, 475, 475, 975, spiderSettings.movementV, spiderSettings.medSpeed, imgSpider);
   maze2.spiders.push(spider2_3);
 }
 
@@ -438,7 +445,9 @@ function mousePressed(){
 
 //Gameplay function for level one of the dungeon
 function level1(){
-  console.log("level1");
+  //----- GAME TIMER -----
+  frameCounter++;
+
   //----- STARTING & EXIT DOOR SETUP -----
   push();
   imageMode(CENTER);
@@ -492,15 +501,15 @@ function level1(){
     bowPlay = true;
   }
 
-  //checks if you can shoot
-  if(key === 'a' && weapon.bowTaken === true && weapon.arrows >= 1){
-    //sets arrow to user's position and allows entry to function
+  //while an arrow isn't flying
+  if (arrowHit){
     weapon.arrowX = user.x;
-    weapon.arrowY = user.y + 40;
-    arrowHit = false;
+    weapon.arrowY = user.y;
   }
-  if(!arrowHit){
+  //arrow is shot
+  if (keyCode === 32 || !arrowHit){
     shoot();
+    keyCode = 34;
   }
 
   // //----- USES START DOOR TO EXIT -----
@@ -516,7 +525,9 @@ function level1(){
 }
 
 function level2(){
-  console.log("level2");
+  //----- GAME TIMER -----
+  frameCounter++;
+
   //----- STARTING & EXIT DOOR SETUP -----
   push();
   imageMode(CENTER);
@@ -525,10 +536,6 @@ function level2(){
   pop();
 
   //----- WALL COLLISION SETUP -----
-  // user.hitLeft = false; broken code, will try to fix code later
-  // user.hitRight = false;
-  // user.hitTop = false;
-  // user.hitBottom = false;
   for(let i = 0; i < maze2.walls.length; i++){
     let wall = maze2.walls[i];
     user.collisionDetect(wall);
@@ -558,35 +565,35 @@ function level2(){
     spider.move();
   }
 
-  //----- WEAPON SETUP AND DISPLAY -----
-  user.weaponProximity(weapon);
-  weapon.display();
+  //----- TBA || WEAPON SETUP AND DISPLAY -----
+  // user.weaponProximity(weapon);
+  // weapon.display();
 
   //----- USER SETUP ----
   user.display();
   user.move();
 
-  if(weapon.bowTaken && !bowPlay){
-    bowPickup.play();
-    bowPlay = true;
-  }
-
-  //checks if you can shoot
-  if(key === 'a' && weapon.bowTaken === true && weapon.arrows >= 1){
-    //sets arrow to user's position and allows entry to function
+  //bow has yet to be added to the second level
+  // if(weapon.bowTaken && !bowPlay){
+  //   bowPickup.play();
+  //   bowPlay = true;
+  // }
+  //while an arrow isn't flying
+  if (arrowHit){
     weapon.arrowX = user.x;
-    weapon.arrowY = user.y + 40;
-    arrowHit = false;
+    weapon.arrowY = user.y;
   }
-  if(!arrowHit){
+  //arrow is shot
+  if (keyCode === 32 || !arrowHit){
     shoot();
+    keyCode = 34;
   }
 
   //----- USES START DOOR TO RETURN TO LAST LEVEL -----
-  if (user.x === door.x2start && user.y === door.y2start){
+  if (user.x <= door.x2start && user.y <= door.y2start){
     level = 1;
-    user.x = door.x1start + 5;
-    user.y = door.y1start + 5;
+    user.x = door.x1goal + 5;
+    user.y = door.y1goal + 5;
   }
   //----- USES EXIT DOOR TO END GAME -----
   if (user.x >= door.x2goal && user.y >= door.y2goal){
@@ -596,12 +603,14 @@ function level2(){
 
 //----- END SCREEN -----
 function endScreen(endingNum){
+  gameplayTimer = round(frameCounter/60);
   if (endingNum === 6){
     //SPIDER DEATH
     fill(bg.rr, bg.rg, bg.rb);
     rectMode(CENTER);
     rect(width/2, height/2, width, height);
     fill(0, 0, 0);
+    //lose
     textSize(50);
     textAlign(CENTER);
     text('YOU LOSE!', width/2, height/3);
@@ -611,11 +620,11 @@ function endScreen(endingNum){
     image(imgSpider, width/2 - 200, height/3 + height/3);
     image(imgSpider, width/2 + 200, height/3 + height/3);
     //plays sound
-    if(!losePlay){
+    if(!loseSoundPlay){
       loseSound.play();
-      losePlay = true;
+      loseSoundPlay = true;
     }
-  } else if (spiderKillCount === 3 && coinCount === 5){
+  } else if (spiderSettings.killCount === 3){
     push();
     imageMode(CENTER);
     image(imgbgDay, 500, 500, width, height);
@@ -641,11 +650,11 @@ function endScreen(endingNum){
       image(imageGuyL, 500, 825, 75, 75);
     }
     pop();
-    if(!winPlay){
+    if(!winSoundPlay){
       winSound.play();
-      winPlay = true;
+      winSoundPlay = true;
     }
-  } else if(coinCount === 1){
+  } else if(coinCount >= 1 && coinCount <= 3){
     //1 COIN COLLECTED
     push();
     imageMode(CENTER);
@@ -654,15 +663,15 @@ function endScreen(endingNum){
     textSize(75);
     textAlign(CENTER);
     text('You win!', width/2, height/3);
-    text('You got 1/5 coins', width/2, height/3 + 80);
+    text('You got ' + coinCount + '/11 coins', width/2, height/3 + 80);
     imageMode(CENTER);
     image(imgCoin, width/2, height/3 + height/3);
     pop();
-    if(!winPlay){
+    if(!winSoundPlay){
       winSound.play();
-      winPlay = true;
+      winSoundPlay = true;
     }
-  } else if (coinCount === 2){
+  } else if (coinCount >= 4 && coinCount <= 6){
     //2 COINS COLLECTED
     push();
     imageMode(CENTER);
@@ -671,16 +680,16 @@ function endScreen(endingNum){
     textSize(75);
     textAlign(CENTER);
     text('You win!', width/2, height/3);
-    text('You got 2/5 coins', width/2, height/3 + 80);
+    text('You got ' + coinCount + '/11 coins', width/2, height/3 + 80);
     imageMode(CENTER);
     image(imgCoin, width/2 - 60, height/3 + height/3);
     image(imgCoin, width/2 + 60, height/3 + height/3);
     pop();
-    if(!winPlay){
+    if(!winSoundPlay){
       winSound.play();
-      winPlay = true;
+      winSoundPlay = true;
     }
-  } else if (coinCount === 3){
+  } else if (coinCount >= 7 && coinCount <= 9){
     //3 COINS COLLECTED
     push();
     imageMode(CENTER);
@@ -689,17 +698,17 @@ function endScreen(endingNum){
     textSize(75);
     textAlign(CENTER);
     text('You win!', width/2, height/3);
-    text('You got 3/5 coins', width/2, height/3 + 80);
+    text('You got ' + coinCount + '/11 coins', width/2, height/3 + 80);
     imageMode(CENTER);
     image(imgCoin, width/2, height/3 + height/3);
     image(imgCoin, width/2 - 120, height/3 + height/3);
     image(imgCoin, width/2 + 120, height/3 + height/3);
     pop();
-    if(!winPlay){
+    if(!winSoundPlay){
       winSound.play();
-      winPlay = true;
+      winSoundPlay = true;
     }
-  } else if (coinCount === 4){
+  } else if (coinCount === 10){
     //4 COINS COLLECTED
     push();
     imageMode(CENTER);
@@ -708,18 +717,18 @@ function endScreen(endingNum){
     textSize(75);
     textAlign(CENTER);
     text('You win!', width/2, height/3);
-    text('You got 4/5 coins', width/2, height/3 + 80);
+    text('You got ' + coinCount + '/11 coins', width/2, height/3 + 80);
     imageMode(CENTER);
     image(imgCoin, width/2 - 180, height/3 + height/3);
     image(imgCoin, width/2 - 60, height/3 + height/3);
     image(imgCoin, width/2 + 60, height/3 + height/3);
     image(imgCoin, width/2 + 180, height/3 + height/3);
     pop();
-    if(!winPlay){
+    if(!winSoundPlay){
       winSound.play();
-      winPlay = true;
+      winSoundPlay = true;
     }
-  } else if (coinCount === 5){
+  } else if (coinCount === 11){
     //ALL 5 COINS COLLECTED
     push();
     imageMode(CENTER);
@@ -738,32 +747,42 @@ function endScreen(endingNum){
     image(imgCoin, width/2 - 120, height/3 + height/3);
     image(imgCoin, width/2 + 120, height/3 + height/3);
     pop();
-    if(!winPlay){
+    if(!winSoundPlay){
       winSound.play();
-      winPlay = true;
+      winSoundPlay = true;
     }
   }
+  //timer results
+  textAlign(CENTER);
+  textSize(40);
+  text("You finished in " + gameplayTimer + " seconds", width/2, height - 50);
 }
 
 function shoot(){
-  if(weapon.arrowX < width && weapon.arrowX > 0 && weapon.arrowY < height && weapon.arrowY > 0){
+  if(weapon.arrowX < width && weapon.arrowX > 0 && weapon.arrowY < height && weapon.arrowY > 0 && weapon.bowTaken){
     //decides which way the arrow is sent based on user's image
-    if(user.alphaR === 255){
-      weapon.alphaArrowR = 255;
-      weapon.arrowX = weapon.arrowX + weapon.arrowSpeed;
-    } else if (user.alphaL === 255){
+    //will add up arrow and down arrow in next progress update
+    if (weapon.arrows === 0){
+      fill(255);
+      textSize(35);
+      text("You are out of arrows.", width/3 + width/4, height - 25);
+    } else if (user.bowRotate === 0){ //left
       weapon.alphaArrowL = 255;
-      weapon.arrowX = weapon.arrowX - weapon.arrowSpeed;
+      weapon.arrowX -= weapon.arrowSpeed;
+    } else if (user.bowRotate === 180){ //right
+      weapon.alphaArrowR = 255;
+      weapon.arrowX += weapon.arrowSpeed;
     }
     //kills the spiders if they get hit
-    for(let i = 0; i < maze.spiders.length; i++){
-      let spider = maze.spiders[i];
+    //NEED TO FIX THIS TO ACCOMADATE ALL LEVELS!!!
+    for(let i = 0; i < maze1.spiders.length; i++){
+      let spider = maze1.spiders[i];
       let d = dist(weapon.arrowX, weapon.arrowY, spider.x, spider.y)
       if(d < 50 && !spider.killed){
         //resets spider
         spider.alpha = 0;
         spider.killed = true;
-        spiderKillCount = spiderKillCount + 1;
+        spiderSettings.killCount = spiderSettings.killCount + 1;
         //resets arrow
         arrowHit = true;
         weapon.alphaArrowR = 0;
@@ -771,11 +790,16 @@ function shoot(){
         weapon.arrows = weapon.arrows - 1;
       }
     }
+    arrowHit = false;
   //ends arrow animation
   } else {
+    if (!arrowHit){
+      weapon.arrows = weapon.arrows - 1;
+    }
     weapon.alphaArrowR = 0;
     weapon.alphaArrowL = 0;
+    weapon.arrowX = user.x;
+    weapon.arrowY = user.y;
     arrowHit = true;
-    weapon.arrows = weapon.arrows - 1;
   }
 }

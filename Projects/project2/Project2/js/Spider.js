@@ -1,10 +1,10 @@
 class Spider {
-  constructor(x, y, pathStart, pathEnd, movement, imgSpider){
+  constructor(x, y, pathStart, pathEnd, movement, speed, imgSpider){
     this.x = x;
     this.y = y;
     this.pathStart = pathStart;
     this.pathEnd = pathEnd;
-    this.speed = 5;
+    this.speed = speed;
     this.size = 50;
     this.alpha = 0;
     this.color = 255;
@@ -15,7 +15,6 @@ class Spider {
 
   move(){
     if(!this.killed){
-      console.log(this.movement);
       if(this.movement === "horizontal"){
         this.x = this.x + this.speed;
         if(this.x >= this.pathEnd ) {

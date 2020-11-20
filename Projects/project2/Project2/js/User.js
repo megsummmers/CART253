@@ -7,7 +7,7 @@ class User {
      this.vy = 0;
      this.w = config.w;
      this.h = config.h;
-     this.speed = 5;
+     this.speed = 4;
      this.color = 255;
      this.alphaL = 255;
      this.alphaR = 0;
@@ -21,6 +21,7 @@ class User {
      this.imageGuyR = config.imageGuyR;
      this.imageGirlL = config.imageGirlL;
      this.imageGirlR = config.imageGirlR;
+     this.bowRotate = 0;
    }
 
    //----- MOVE THE USER -----
@@ -31,6 +32,7 @@ class User {
      this.alphaL = 255;
      this.alphaR = 0;
      this.moved = true;
+     this.bowRotate = 0;
    }
    else if (keyIsDown(RIGHT_ARROW) && !this.hitLeft) {
      this.vx = this.speed;
@@ -38,6 +40,7 @@ class User {
      this.alphaR = 255;
      this.alphaL = 0;
      this.moved = true;
+     this.bowRotate = 180;
    }
    else {
      this.vx = 0;
@@ -46,10 +49,12 @@ class User {
    if (keyIsDown(UP_ARROW) && !this.hitBottom) {
      this.vy = -this.speed;
      this.moved = true;
+     this.bowRotate = 90;
    }
    else if (keyIsDown(DOWN_ARROW) && !this.hitTop) {
      this.vy = this.speed;
      this.moved = true;
+     this.bowRotate = 270;
    }
    else {
      this.vy = 0;
@@ -58,8 +63,8 @@ class User {
    this.x += this.vx;
    this.y += this.vy;
 
-   this.x = constrain(this.x, 20, width - 20);
-   this.y = constrain(this.y, 20, height - 20);
+   this.x = constrain(this.x, 5, width - 40);
+   this.y = constrain(this.y, 5, height - 40);
    }
 
    display() {
@@ -124,7 +129,7 @@ class User {
   coinProximity(coin){
     if(!coin.coinTaken){
       let cD = dist(this.x, this.y, coin.x, coin.y);
-      if (cD <= 50){
+      if (cD <= 40){
         coin.alpha = 0;
         coin.sound.play();
         coin.coinCounted = false;
