@@ -100,19 +100,6 @@ class User {
       //change velocity so the player can't move
       this.x -= this.vx;
       this.y -= this.vy;
-      // //Broken version, will try to fix later
-      // wall.r = 255;
-      // if (this.rectSide === 'left') {
-      //   this.hitLeft = true;
-      // }
-      // else if (this.rectSide === 'right') {
-      //   this.hitRight = true;
-      // }
-      // else if (this.rectSide === 'top') {
-      //   this.hitTop = true;
-      // }
-      // else if (this.rectSide === 'bottom') {
-      //   this.hitBottom = true;
       }
   }
 
@@ -124,12 +111,6 @@ class User {
         coin.sound.play();
         coin.coinCounted = false;
         coin.coinTaken = true;
-      } else if (cD > 300) {
-        coin.alpha -= 20;
-        coin.alpha = constrain(coin.alpha, 0, 255);
-      } else if (cD < 300) {
-        coin.alpha += 20;
-        coin.alpha = constrain(coin.alpha, 0, 255);
       }
     }
   }
@@ -139,14 +120,6 @@ class User {
     if (sD <= 50 && !spider.killed){
       spider.alpha = 0;
       return 6;
-    } else if (sD > 300 && !spider.killed) {
-      spider.alpha -= 20;
-      spider.alpha = constrain(spider.alpha, 0, 255);
-      return 0;
-    } else if (sD < 300 && !spider.killed) {
-      spider.alpha += 20;
-      spider.alpha = constrain(spider.alpha, 0, 255);
-      return 0;
     }
   }
 
@@ -156,14 +129,6 @@ class User {
       if (wD <= 50){
         weapon.alpha = 0;
         weapon.bowTaken = true;
-      } else if (wD > 300) {
-        weapon.alpha -= 20;
-        weapon.alpha = constrain(weapon.alpha, 0, 255);
-        return 0;
-      } else if (wD < 300) {
-        weapon.alpha += 20;
-        weapon.alpha = constrain(weapon.alpha, 0, 255);
-        return 0;
       }
     }
   }

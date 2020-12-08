@@ -83,7 +83,6 @@ function setup() {
 function draw() {
   background(0, 0, 0);
 
-  console.log(targetsHit);
   //adds a ball after 10 targets hit
   if(targetsHit >= 10){
     //reset counter
@@ -155,7 +154,7 @@ function shoot(){
   //checks if arrow is within the canvas
   if(bow.arrowX < width && bow.arrowX > 0 && bow.arrowY < height && bow.arrowY > 0 && bow.bowTaken){
     //arrow animation based on user's direction
-    if (user.bowRotate === 0t){
+    if (user.bowRotate === 0){
       bow.arrowAlphaL = 255;
       bow.arrowAlphaU = 0;
       bow.arrowAlphaR = 0;

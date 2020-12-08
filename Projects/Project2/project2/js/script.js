@@ -22,7 +22,15 @@ let maze1 = {
   coins: [],
   numCoins: 5,
   spiders: [],
-  numSpiders: 3
+  numSpiders: 3,
+  door: {
+    startX: 25,
+    startY: 25,
+    goalX: 50,
+    goalY: 950,
+    w: 51,
+    h: 80
+  }
 };
 
 let maze2 = {
@@ -31,7 +39,32 @@ let maze2 = {
   coins: [],
   numCoins: 5,
   spiders: [],
-  numSpiders: 3
+  numSpiders: 3,
+  door: {
+    startX: 25,
+    startY: 25,
+    goalX: 950,
+    goalY: 950,
+    w: 51,
+    h: 80
+  }
+};
+
+let maze3 = {
+  walls: [],
+  numWalls: 25,
+  coins: [],
+  numCoins: 5,
+  spiders: [],
+  numSpiders: 3,
+  door: {
+    startX: 25,
+    startY: 25,
+    goalX: 550,
+    goalY: 950,
+    w: 51,
+    h: 80
+  }
 };
 
 let bg = {
@@ -41,14 +74,6 @@ let bg = {
   rr: 175,
   rg: 25,
   rb: 25
-};
-
-let door = {
-  x1start: 25, y1start: 25, //level 1 starting door
-  x1goal: 50, y1goal: 950, //level 1 door to the next level
-  x2start: 25, y2start: 25, //level 1 starting door
-  x2goal: 950, y2goal: 950, //level 1 door to the next level
-  w: 51, h: 80
 };
 
 let girlCircle = {
@@ -77,7 +102,9 @@ let ending = 0;
 let coinCount = 0;
 let user;
 let walls;
-let weapon;
+let weapon1;
+let weapon2;
+let weapon3;
 let arrowHit = true;
 let page = 1; //For title screen
 let mousePress;
@@ -141,7 +168,12 @@ function setup(){
   };
   user = new User(userSettings);
 
-  weapon = new Bow(650, 50, imgWeapon, imgArrowL, imgArrowR);
+  //level 1 bow
+  weapon1 = new Bow(650, 50, imgWeapon, imgArrowL, imgArrowR);
+  //level 2 bow
+  weapon2 = new Bow(925, 275, imgWeapon, imgArrowL, imgArrowR);
+  //level 3 bow
+  weapon3 = new Bow(725, 975, imgWeapon, imgArrowL, imgArrowR);
 
   //Wall Initialization level 1
   let wall1_1 = new Wall(100, 0, 200, 200);
@@ -211,6 +243,58 @@ function setup(){
   let wall2_23 = new Wall(850, 900, 50, 100);
   maze2.walls.push(wall2_23);
 
+  //Wall Initialization level 3
+  let wall3_1 = new Wall(0, 100, 300, 50);
+  maze3.walls.push(wall3_1);
+  let wall3_2 = new Wall(50, 200, 150, 250);
+  maze3.walls.push(wall3_2);
+  let wall3_3 = new Wall(0, 300, 50, 250);
+  maze3.walls.push(wall3_3);
+  let wall3_4 = new Wall(100, 400, 100, 200);
+  maze3.walls.push(wall3_4);
+  let wall3_5 = new Wall(50, 600, 200, 250);
+  maze3.walls.push(wall3_5);
+  let wall3_6 = new Wall(0, 900, 350, 100);
+  maze3.walls.push(wall3_6);
+  let wall3_7 = new Wall(350, 0, 150, 350);
+  maze3.walls.push(wall3_7);
+  let wall3_8 = new Wall(250, 400, 350, 150);
+  maze3.walls.push(wall3_8);
+  let wall3_9 = new Wall(300, 600, 50, 100);
+  maze3.walls.push(wall3_9);
+  let wall3_10 = new Wall(300, 700, 450, 150);
+  maze3.walls.push(wall3_10);
+  let wall3_11 = new Wall(400, 600, 100, 400);
+  maze3.walls.push(wall3_11);
+  let wall3_12 = new Wall(550, 0, 100, 150);
+  maze3.walls.push(wall3_12);
+  let wall3_13 = new Wall(500, 200, 350, 50);
+  maze3.walls.push(wall3_13);
+  let wall3_14 = new Wall(550, 200, 50, 150);
+  maze3.walls.push(wall3_14);
+  let wall3_15 = new Wall(550, 600, 200, 50);
+  maze3.walls.push(wall3_15);
+  let wall3_16 = new Wall(600, 900, 100, 100);
+  maze3.walls.push(wall3_16);
+  let wall3_17 = new Wall(700, 0, 150, 50);
+  maze3.walls.push(wall3_17);
+  let wall3_18 = new Wall(650, 100, 150, 50);
+  maze3.walls.push(wall3_18);
+  let wall3_19 = new Wall(800, 100, 100, 200);
+  maze3.walls.push(wall3_19);
+  let wall3_20 = new Wall(650, 300, 300, 250);
+  maze3.walls.push(wall3_20);
+  let wall3_21 = new Wall(800, 500, 100, 200);
+  maze3.walls.push(wall3_21);
+  let wall3_22 = new Wall(750, 750, 100, 200);
+  maze3.walls.push(wall3_22);
+  let wall3_23 = new Wall(900, 600, 50, 350);
+  maze3.walls.push(wall3_23);
+  let wall3_24 = new Wall(900, 50, 50, 100);
+  maze3.walls.push(wall3_24);
+  let wall3_25 = new Wall(950, 200, 50, 200);
+  maze3.walls.push(wall3_25);
+
   //Level 1 Coin Initialization
   let coin1_1 = new Coin(50, 850, imgCoin, coinPickup);
   maze1.coins.push(coin1_1);
@@ -232,10 +316,20 @@ function setup(){
   maze2.coins.push(coin2_3);
   let coin2_4 = new Coin(875, 25, imgCoin, coinPickup);
   maze2.coins.push(coin2_4);
-  let coin2_5 = new Coin(925, 275, imgCoin, coinPickup);
+  let coin2_5 = new Coin(825, 925, imgCoin, coinPickup);
   maze2.coins.push(coin2_5);
-  let coin2_6 = new Coin(825, 925, imgCoin, coinPickup);
-  maze2.coins.push(coin2_6);
+
+  //Level 3 Coin Initialization
+  let coin3_1 = new Coin(25, 800, imgCoin, coinPickup);
+  maze3.coins.push(coin3_1);
+  let coin3_2 = new Coin(375, 975, imgCoin, coinPickup);
+  maze3.coins.push(coin3_2);
+  let coin3_3 = new Coin(675, 25, imgCoin, coinPickup);
+  maze3.coins.push(coin3_3);
+  let coin3_4 = new Coin(925, 275, imgCoin, coinPickup);
+  maze3.coins.push(coin3_4);
+  let coin3_5 = new Coin(925, 575, imgCoin, coinPickup);
+  maze3.coins.push(coin3_5);
 
   //Level 1 Spider Initialization
   let spider1_1 = new Spider(350, 50, 50, 550, spiderSettings.movementV, spiderSettings.fastSpeed, imgSpider);
@@ -245,13 +339,21 @@ function setup(){
   let spider1_3 = new Spider(750, 50, 50, 450, spiderSettings.movementV, spiderSettings.fastSpeed, imgSpider);
   maze1.spiders.push(spider1_3);
 
-  //Level 1 Spider Initialization
+  //Level 2 Spider Initialization
   let spider2_1 = new Spider(525, 125, 125, 575, spiderSettings.movementV, spiderSettings.fastSpeed, imgSpider);
   maze2.spiders.push(spider2_1);
   let spider2_2 = new Spider(75, 325, 75, 525, spiderSettings.movementH, spiderSettings.fastSpeed, imgSpider);
   maze2.spiders.push(spider2_2);
   let spider2_3 = new Spider(725, 475, 475, 975, spiderSettings.movementV, spiderSettings.medSpeed, imgSpider);
   maze2.spiders.push(spider2_3);
+
+  //Level 3 Spider Initialization
+  let spider3_1 = new Spider(25, 875, 25, 375, spiderSettings.movementH, spiderSettings.fastSpeed, imgSpider);
+  maze3.spiders.push(spider3_1);
+  let spider3_2 = new Spider(225, 575, 225, 775, spiderSettings.movementH, spiderSettings.medSpeed, imgSpider);
+  maze3.spiders.push(spider3_2);
+  let spider3_3 = new Spider(525, 275, 275, 375, spiderSettings.movementV, spiderSettings.medSpeed, imgSpider);
+  maze3.spiders.push(spider3_3);
 }
 
 function draw(){
@@ -269,6 +371,8 @@ function draw(){
       level1();
     } else if (level === 2){
       level2();
+    } else if (level === 3){
+      level3();
     }
   } else if (state === 'ending'){
     endScreen(ending);
@@ -451,15 +555,11 @@ function level1(){
   //----- STARTING & EXIT DOOR SETUP -----
   push();
   imageMode(CENTER);
-  image(imgDoor, door.x1start, door.y1start, door.w, door.h);
-  image(imgDoor, door.x1goal, door.y1goal, door.w, door.h);
+  image(imgDoor, maze1.door.startX, maze1.door.startY, maze1.door.w, maze1.door.h);
+  image(imgDoor, maze1.door.goalX, maze1.door.goalY, maze1.door.w, maze1.door.h);
   pop();
 
   //----- WALL COLLISION SETUP -----
-  // user.hitLeft = false; broken code, will try to fix code later
-  // user.hitRight = false;
-  // user.hitTop = false;
-  // user.hitBottom = false;
   for(let i = 0; i < maze1.walls.length; i++){
     let wall = maze1.walls[i];
     user.collisionDetect(wall);
@@ -489,38 +589,38 @@ function level1(){
   }
 
   //----- WEAPON SETUP AND DISPLAY -----
-  user.weaponProximity(weapon);
-  weapon.display();
+  user.weaponProximity(weapon1);
+  weapon1.display();
 
   //----- USER SETUP ----
   user.display();
   user.move();
 
-  if(weapon.bowTaken && !bowPlay){
+  if(weapon1.bowTaken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
 
   //while an arrow isn't flying
   if (arrowHit){
-    weapon.arrowX = user.x;
-    weapon.arrowY = user.y;
+    weapon1.arrowX = user.x;
+    weapon1.arrowY = user.y;
   }
   //arrow is shot
   if (keyCode === 32 || !arrowHit){
-    shoot();
+    shoot(weapon1);
     keyCode = 34;
   }
 
   // //----- USES START DOOR TO EXIT -----
-  if (user.x <= door.x1start && user.y <= door.y1start){
+  if (user.x <= maze1.door.startX && user.y <= maze1.door.startY){
     level = 1;
   }
   //----- USES EXIT DOOR TO GO TO NEXT LEVEL -----
-  if (user.x <= door.x1goal && user.y >= door.y1goal){
+  if (user.x <= maze1.door.goalX && user.y >= maze1.door.goalY){
     level = 2;
-    user.x = door.x2start + 5;
-    user.y = door.y2start + 5;
+    user.x = maze2.door.startX + 5;
+    user.y = maze2.door.startY + 5;
   }
 }
 
@@ -531,8 +631,8 @@ function level2(){
   //----- STARTING & EXIT DOOR SETUP -----
   push();
   imageMode(CENTER);
-  image(imgDoor, door.x2start, door.y2start, door.w, door.h);
-  image(imgDoor, door.x2goal, door.y2goal, door.w, door.h);
+  image(imgDoor, maze2.door.startX, maze2.door.startY, maze2.door.w, maze2.door.h);
+  image(imgDoor, maze2.door.goalX, maze2.door.goalY, maze2.door.w, maze2.door.h);
   pop();
 
   //----- WALL COLLISION SETUP -----
@@ -566,38 +666,118 @@ function level2(){
   }
 
   //----- TBA || WEAPON SETUP AND DISPLAY -----
-  // user.weaponProximity(weapon);
-  // weapon.display();
+  user.weaponProximity(weapon2);
+  weapon2.display();
 
   //----- USER SETUP ----
   user.display();
   user.move();
 
   //bow has yet to be added to the second level
-  // if(weapon.bowTaken && !bowPlay){
-  //   bowPickup.play();
-  //   bowPlay = true;
-  // }
-  //while an arrow isn't flying
+  if(weapon2.bowTaken && !bowPlay){
+    bowPickup.play();
+    bowPlay = true;
+  }
+  //while an arrow isn't shot
   if (arrowHit){
-    weapon.arrowX = user.x;
-    weapon.arrowY = user.y;
+    weapon2.arrowX = user.x;
+    weapon2.arrowY = user.y;
   }
   //arrow is shot
   if (keyCode === 32 || !arrowHit){
-    shoot();
+    shoot(weapon2);
     keyCode = 34;
   }
 
   //----- USES START DOOR TO RETURN TO LAST LEVEL -----
-  if (user.x <= door.x2start && user.y <= door.y2start){
+  if (user.x <= maze2.door.startX && user.y <= maze2.door.startY){
     level = 1;
-    user.x = door.x1goal + 5;
-    user.y = door.y1goal + 5;
+    user.x = maze2.door.goalX + 5;
+    user.y = maze2.door.goalY + 5;
   }
   //----- USES EXIT DOOR TO END GAME -----
-  if (user.x >= door.x2goal && user.y >= door.y2goal){
-    state = "ending";
+  if (user.x >= maze2.door.goalX && user.y >= maze2.door.goalY){
+    level = 3;
+    user.x = maze3.door.startX + 5;
+    user.y = maze3.door.startY + 5;
+  }
+}
+
+function level3(){
+  //----- GAME TIMER -----
+  frameCounter++;
+
+  //----- STARTING & EXIT DOOR SETUP -----
+  push();
+  imageMode(CENTER);
+  image(imgDoor, maze3.door.startX, maze3.door.startY, maze3.door.w, maze3.door.h);
+  image(imgDoor, maze3.door.goalX, maze3.door.goalY, maze3.door.w, maze3.door.h);
+  pop();
+
+  //----- WALL COLLISION SETUP -----
+  for(let i = 0; i < maze3.walls.length; i++){
+    let wall = maze3.walls[i];
+    user.collisionDetect(wall);
+    wall.display();
+  }
+
+  //----- COINS SETUP AND DISPLAY -----
+  for(let i = 0; i < maze3.coins.length; i++){
+    let coin = maze3.coins[i];
+    user.coinProximity(coin);
+    if(!coin.coinCounted && coin.coinTaken){
+      coinCount = coinCount + 1;
+      coin.coinCounted = true;
+    }
+    coin.display();
+  }
+
+  //----- SPIDERS SETUP AND DISPLAY -----
+  for(let i = 0; i < maze3.spiders.length; i++){
+    let spider = maze3.spiders[i];
+    ending = user.spiderProximity(spider);
+    if(ending === 6){
+      state = 'ending';
+      break;
+    }
+    spider.display();
+    spider.move();
+  }
+
+  //----- TBA || WEAPON SETUP AND DISPLAY -----
+  user.weaponProximity(weapon3);
+  weapon3.display();
+
+  //----- USER SETUP ----
+  user.display();
+  user.move();
+
+  //bow has yet to be added to the second level
+  if(weapon3.bowTaken && !bowPlay){
+    bowPickup.play();
+    bowPlay = true;
+  }
+  //while an arrow isn't shot
+  if (arrowHit){
+    weapon3.arrowX = user.x;
+    weapon3.arrowY = user.y;
+  }
+  //arrow is shot
+  if (keyCode === 32 || !arrowHit){
+    shoot(weapon3);
+    keyCode = 34;
+  }
+
+  console.log(maze3.door.goalX, maze3.door.goalY, user.x, user.y);
+  //----- USES START DOOR TO RETURN TO LAST LEVEL -----
+  if (user.x <= maze3.door.startX && user.y <= maze3.door.startY){
+    level = 2;
+    user.x = maze2.door.goalX - 5;
+    user.y = maze2.door.goalY - 5;
+  }
+  //----- USES EXIT DOOR TO END GAME -----
+  if (user.x >= maze3.door.goalX - 25 && user.x <= maze3.door.goalX + 25 && user.y >= maze3.door.goalY){
+    state = 'ending';
   }
 }
 
@@ -758,7 +938,7 @@ function endScreen(endingNum){
   text("You finished in " + gameplayTimer + " seconds", width/2, height - 50);
 }
 
-function shoot(){
+function shoot(weapon){
   if(weapon.arrowX < width && weapon.arrowX > 0 && weapon.arrowY < height && weapon.arrowY > 0 && weapon.bowTaken){
     //decides which way the arrow is sent based on user's image
     //will add up arrow and down arrow in next progress update
@@ -774,20 +954,62 @@ function shoot(){
       weapon.arrowX += weapon.arrowSpeed;
     }
     //kills the spiders if they get hit
-    //NEED TO FIX THIS TO ACCOMADATE ALL LEVELS!!!
-    for(let i = 0; i < maze1.spiders.length; i++){
-      let spider = maze1.spiders[i];
-      let d = dist(weapon.arrowX, weapon.arrowY, spider.x, spider.y)
-      if(d < 50 && !spider.killed){
-        //resets spider
-        spider.alpha = 0;
-        spider.killed = true;
-        spiderSettings.killCount = spiderSettings.killCount + 1;
-        //resets arrow
-        arrowHit = true;
-        weapon.alphaArrowR = 0;
-        weapon.alphaArrowL = 0;
-        weapon.arrows = weapon.arrows - 1;
+    if (level === 1){
+      for(let i = 0; i < maze1.spiders.length; i++){
+        let spider = maze1.spiders[i];
+        if(spider.x + spider.size >= weapon.arrowX &&
+          spider.x <= weapon.arrowX + weapon.size &&
+          spider.y + spider.size >= weapon.arrowY &&
+          spider.y <= weapon.arrowY + weapon.size &&
+          !spider.killed){
+          //resets spider
+          spider.alpha = 0;
+          spider.killed = true;
+          spiderSettings.killCount = spiderSettings.killCount + 1;
+          //resets arrow
+          arrowHit = true;
+          weapon.alphaArrowR = 0;
+          weapon.alphaArrowL = 0;
+          weapon.arrows = weapon.arrows - 1;
+        }
+      }
+    } else if (level === 2){
+      for(let i = 0; i < maze2.spiders.length; i++){
+        let spider = maze2.spiders[i];
+        if(spider.x + spider.size >= weapon.arrowX &&
+          spider.x <= weapon.arrowX + weapon.size &&
+          spider.y + spider.size >= weapon.arrowY &&
+          spider.y <= weapon.arrowY + weapon.size &&
+          !spider.killed){
+          //resets spider
+          spider.alpha = 0;
+          spider.killed = true;
+          spiderSettings.killCount = spiderSettings.killCount + 1;
+          //resets arrow
+          arrowHit = true;
+          weapon.alphaArrowR = 0;
+          weapon.alphaArrowL = 0;
+          weapon.arrows = weapon.arrows - 1;
+        }
+      }
+    } else if (level === 3){
+      for(let i = 0; i < maze3.spiders.length; i++){
+        let spider = maze3.spiders[i];
+        if(spider.x + spider.size >= weapon.arrowX &&
+          spider.x <= weapon.arrowX + weapon.size &&
+          spider.y + spider.size >= weapon.arrowY &&
+          spider.y <= weapon.arrowY + weapon.size &&
+          !spider.killed){
+          //resets spider
+          spider.alpha = 0;
+          spider.killed = true;
+          spiderSettings.killCount = spiderSettings.killCount + 1;
+          //resets arrow
+          arrowHit = true;
+          weapon.alphaArrowR = 0;
+          weapon.alphaArrowL = 0;
+          weapon.arrows = weapon.arrows - 1;
+        }
       }
     }
     arrowHit = false;

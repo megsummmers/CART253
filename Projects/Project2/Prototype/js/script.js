@@ -54,10 +54,12 @@ let boyCircle = {
 };
 
 //variables
-let state = "title";
+let state = "gameplay";
 let ending = 0;
 let coinCount = 0;
 let user;
+let ray;
+let particle;
 let walls;
 let weapon;
 let arrowHit = true;
@@ -122,25 +124,28 @@ function setup(){
 
   weapon = new Bow(650, 50, imgWeapon, imgArrowL, imgArrowR);
 
+  // for (let i = 0; i < 5; i++) {
+  //   walls[i] = ne
+  // }
+
+  //raycasting
+  particle = new Particle();
+
   //Wall Initialization level 1
-  let wall1 = new Wall(100, 0, 200, 200);
-  maze.walls.push(wall1);
-  let wall2 = new Wall(0, 300, 300, 200);
-  maze.walls.push(wall2);
-  let wall3 = new Wall(100, 600, 100, 300);
-  maze.walls.push(wall3);
-  let wall4 = new Wall(400, 100, 300, 300);
-  maze.walls.push(wall4);
-  let wall5 = new Wall(300, 600, 200, 400);
-  maze.walls.push(wall5);
-  let wall6 = new Wall(600, 500, 200, 200);
-  maze.walls.push(wall6);
-  let wall7 = new Wall(600, 800, 100, 200);
-  maze.walls.push(wall7);
-  let wall8 = new Wall(800, 100, 200, 200);
-  maze.walls.push(wall8);
-  let wall9 = new Wall(800, 400, 200, 500);
-  maze.walls.push(wall9);
+  maze.walls.push(new Wall(100, 0, 200, 200));
+  maze.walls.push(new Wall(0, 300, 300, 200));
+  maze.walls.push(new Wall(100, 600, 100, 300));
+  maze.walls.push(new Wall(400, 100, 300, 300));
+  maze.walls.push(new Wall(300, 600, 200, 400));
+  maze.walls.push(new Wall(600, 500, 200, 200));
+  maze.walls.push(new Wall(600, 800, 100, 200));
+  maze.walls.push(new Wall(800, 100, 200, 200));
+  maze.walls.push(new Wall(800, 400, 200, 500));
+  //outer boundaries
+  maze.walls.push(new Wall(0, 0, width, 0));
+  maze.walls.push(new Wall(width, 0, width, height));
+  maze.walls.push(new Wall(0, height, width, height));
+  maze.walls.push(new Wall(0, 0, 0, height));
 
   //Coin Initialization
   let coin1 = new Coin(50, 850, imgCoin, coinPickup);
@@ -354,20 +359,35 @@ function gameplay(){
   image(imgDoor, door.x, door.y, door.w, door.h);
 
   //----- WALL COLLISION SETUP -----
-  // user.hitLeft = false; broken code, will try to fix code later
-  // user.hitRight = false;
-  // user.hitTop = false;
-  // user.hitBottom = false;
+  user.hitLeft = false; //broken code, will try to fix code later
+  user.hitRight = false;
+  user.hitTop = false;
+  user.hitBottom = false;
   for(let i = 0; i < maze.walls.length; i++){
     let wall = maze.walls[i];
     user.collisionDetect(wall);
     wall.display();
   }
 
+  for (let i = 0; i < maze.walls.length; i++){
+    let wall = maze.walls[i];
+    wall.display();
+  }
+  particle.update(user.x, user.y);
+  particle.look(maze.walls);
+
   //----- COINS SETUP AND DISPLAY -----
   for(let i = 0; i < maze.coins.length; i++){
     let coin = maze.coins[i];
     user.coinProximity(coin);
+    let prox = particle.objectCollision(coin);
+    if (prox && !coin.coinTaken){
+      coin.alpha += 20;
+      coin.alpha = constrain(coin.alpha, 0, 255);
+    } else if (prox === false) {
+      coin.alpha -= 20;
+      coin.alpha = constrain(coin.alpha, 0, 255);
+    }
     if(!coin.coinCounted && coin.coinTaken){
       coinCount = coinCount + 1;
       coin.coinCounted = true;
@@ -383,12 +403,28 @@ function gameplay(){
       state = 'ending';
       break;
     }
+    let prox = particle.objectCollision(spider);
+    if (prox && !spider.killed){
+      spider.alpha += 20;
+      spider.alpha = constrain(spider.alpha, 0, 255);
+    } else {
+      spider.alpha -= 20;
+      spider.alpha = constrain(spider.alpha, 0, 255);
+    }
     spider.display();
     spider.move();
   }
 
   //----- WEAPON SETUP AND DISPLAY -----
   user.weaponProximity(weapon);
+  let prox = particle.objectCollision(weapon);
+  if (prox && !weapon.bowTaken){
+    weapon.alpha += 20;
+    weapon.alpha = constrain(weapon.alpha, 0, 255);
+  } else {
+    weapon.alpha -= 20;
+    weapon.alpha = constrain(weapon.alpha, 0, 255);
+  }
   weapon.display();
 
   //----- USER SETUP ----

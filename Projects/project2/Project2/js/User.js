@@ -110,19 +110,6 @@ class User {
       //change velocity so the player can't move
       this.x -= this.vx;
       this.y -= this.vy;
-      // //Broken version, will try to fix later
-      // wall.r = 255;
-      // if (this.rectSide === 'left') {
-      //   this.hitLeft = true;
-      // }
-      // else if (this.rectSide === 'right') {
-      //   this.hitRight = true;
-      // }
-      // else if (this.rectSide === 'top') {
-      //   this.hitTop = true;
-      // }
-      // else if (this.rectSide === 'bottom') {
-      //   this.hitBottom = true;
       }
   }
 
