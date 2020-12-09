@@ -82,9 +82,9 @@ class User {
        push();
        //imageMode(CENTER);
        tint(255, 255, 255, this.alphaL);
-       image(this.imageGirlL, this.x, this.y, this.size);
+       image(this.imageGirlL, this.x, this.y, this.w, this.h);
        tint(255, 255, 255, this.alphaR);
-       image(this.imageGirlR, this.x, this.y, this.size);
+       image(this.imageGirlR, this.x, this.y, this.w, this.h);
        pop();
      }
    }
@@ -114,19 +114,13 @@ class User {
   }
 
   coinProximity(coin){
-    if(!coin.coinTaken){
+    if(!coin.taken){
       let cD = dist(this.x, this.y, coin.x, coin.y);
       if (cD <= 40){
         coin.alpha = 0;
         coin.sound.play();
         coin.coinCounted = false;
-        coin.coinTaken = true;
-      } else if (cD > 300) {
-        coin.alpha -= 20;
-        coin.alpha = constrain(coin.alpha, 0, 255);
-      } else if (cD < 300) {
-        coin.alpha += 20;
-        coin.alpha = constrain(coin.alpha, 0, 255);
+        coin.taken = true;
       }
     }
   }
@@ -136,30 +130,23 @@ class User {
     if (sD <= 50 && !spider.killed){
       spider.alpha = 0;
       return 6;
-    } else if (sD > 300 && !spider.killed) {
+    } else if (sD > 200 && !spider.killed) {
       spider.alpha -= 20;
       spider.alpha = constrain(spider.alpha, 0, 255);
       return 0;
-    } else if (sD < 300 && !spider.killed) {
+    } else if (sD < 200 && !spider.killed) {
       spider.alpha += 20;
       spider.alpha = constrain(spider.alpha, 0, 255);
-      return 0;
     }
   }
 
   weaponProximity(weapon){
-    if(!weapon.bowTaken){
+    if(!weapon.taken){
       let wD = dist(this.x, this.y, weapon.x, weapon.y);
       if (wD <= 50){
         weapon.alpha = 0;
-        weapon.bowTaken = true;
+        weapon.taken = true;
       } else if (wD > 300) {
-        weapon.alpha -= 20;
-        weapon.alpha = constrain(weapon.alpha, 0, 255);
-        return 0;
-      } else if (wD < 300) {
-        weapon.alpha += 20;
-        weapon.alpha = constrain(weapon.alpha, 0, 255);
         return 0;
       }
     }

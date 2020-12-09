@@ -22,7 +22,9 @@ let maze = {
   coins: [],
   numCoins: 5,
   spiders: [],
-  numSpiders: 3
+  numSpiders: 3,
+  doors: [],
+  numDoors: 2
 };
 
 let bg = {
@@ -35,6 +37,8 @@ let bg = {
 };
 
 let door = {
+  color: 255,
+  alpha: 255,
   x: 20, y: 20,
   w: 51, h: 80
 };
@@ -123,10 +127,6 @@ function setup(){
   user = new User(userSettings);
 
   weapon = new Bow(650, 50, imgWeapon, imgArrowL, imgArrowR);
-
-  // for (let i = 0; i < 5; i++) {
-  //   walls[i] = ne
-  // }
 
   //raycasting
   particle = new Particle();
@@ -356,101 +356,97 @@ function mousePressed(){
 
 function gameplay(){
   //----- EXIT DOOR SETUP -----
+  push();
+  tint(door.color, door.color, door.color, door.alpha);
   image(imgDoor, door.x, door.y, door.w, door.h);
+  pop();
 
   //----- WALL COLLISION SETUP -----
-  user.hitLeft = false; //broken code, will try to fix code later
-  user.hitRight = false;
-  user.hitTop = false;
-  user.hitBottom = false;
   for(let i = 0; i < maze.walls.length; i++){
     let wall = maze.walls[i];
     user.collisionDetect(wall);
     wall.display();
   }
-
-  for (let i = 0; i < maze.walls.length; i++){
-    let wall = maze.walls[i];
-    wall.display();
-  }
+  //raycasting particle
   particle.update(user.x, user.y);
-  particle.look(maze.walls);
+  particle.look([...maze.walls, ...maze.coins]);
 
   //----- COINS SETUP AND DISPLAY -----
   for(let i = 0; i < maze.coins.length; i++){
     let coin = maze.coins[i];
     user.coinProximity(coin);
-    let prox = particle.objectCollision(coin);
-    if (prox && !coin.coinTaken){
-      coin.alpha += 20;
-      coin.alpha = constrain(coin.alpha, 0, 255);
-    } else if (prox === false) {
-      coin.alpha -= 20;
-      coin.alpha = constrain(coin.alpha, 0, 255);
-    }
-    if(!coin.coinCounted && coin.coinTaken){
-      coinCount = coinCount + 1;
-      coin.coinCounted = true;
-    }
+    // let proxC = particle.objectCollision(coin);
+    // if (proxC && !coin.coinTaken){
+    //   coin.alpha += 20;
+    //   coin.alpha = constrain(coin.alpha, 0, 255);
+    // } else if (proxC === false) {
+    //   coin.alpha -= 20;
+    //   coin.alpha = constrain(coin.alpha, 0, 255);
+    // }
+    // if(!coin.coinCounted && coin.coinTaken){
+    //   coinCount = coinCount + 1;
+    //   coin.coinCounted = true;
+    // }
     coin.display();
   }
+  //particle.look(maze.coins);
 
-  //----- SPIDERS SETUP AND DISPLAY -----
-  for(let i = 0; i < maze.spiders.length; i++){
-    let spider = maze.spiders[i];
-    ending = user.spiderProximity(spider);
-    if(ending === 6){
-      state = 'ending';
-      break;
-    }
-    let prox = particle.objectCollision(spider);
-    if (prox && !spider.killed){
-      spider.alpha += 20;
-      spider.alpha = constrain(spider.alpha, 0, 255);
-    } else {
-      spider.alpha -= 20;
-      spider.alpha = constrain(spider.alpha, 0, 255);
-    }
-    spider.display();
-    spider.move();
-  }
-
-  //----- WEAPON SETUP AND DISPLAY -----
-  user.weaponProximity(weapon);
-  let prox = particle.objectCollision(weapon);
-  if (prox && !weapon.bowTaken){
-    weapon.alpha += 20;
-    weapon.alpha = constrain(weapon.alpha, 0, 255);
-  } else {
-    weapon.alpha -= 20;
-    weapon.alpha = constrain(weapon.alpha, 0, 255);
-  }
-  weapon.display();
-
+  // //----- SPIDERS SETUP AND DISPLAY -----
+  // for(let i = 0; i < maze.spiders.length; i++){
+  //   let spider = maze.spiders[i];
+  //   ending = user.spiderProximity(spider);
+  //   if(ending === 6){
+  //     state = 'ending';
+  //     break;
+  //   }
+  //   let proxS = particle.objectCollision(spider);
+  //   if (proxS && !spider.killed){
+  //     spider.alpha += 20;
+  //     spider.alpha = constrain(spider.alpha, 0, 255);
+  //   } else {
+  //     spider.alpha -= 20;
+  //     spider.alpha = constrain(spider.alpha, 0, 255);
+  //   }
+  //   spider.display();
+  //   spider.move();
+  // }
+  //
+  // //----- WEAPON SETUP AND DISPLAY -----
+  // user.weaponProximity(weapon);
+  // let proxW = particle.objectCollision(weapon);
+  // if (proxW && !weapon.bowTaken){
+  //   weapon.alpha += 20;
+  //   weapon.alpha = constrain(weapon.alpha, 0, 255);
+  // } else {
+  //   weapon.alpha -= 20;
+  //   weapon.alpha = constrain(weapon.alpha, 0, 255);
+  // }
+  // weapon.display();
+  //
   //----- USER SETUP ----
   user.display();
   user.move();
-
-  if(weapon.bowTaken && !bowPlay){
-    bowPickup.play();
-    bowPlay = true;
-  }
-
-  //checks if you can shoot
-  if(key === 'a' && weapon.bowTaken === true && weapon.arrows >= 1){
-    //sets arrow to user's position and allows entry to function
-    weapon.arrowX = user.x;
-    weapon.arrowY = user.y + 40;
-    arrowHit = false;
-  }
-  if(!arrowHit){
-    shoot();
-  }
-
-  //----- GAME END -----
-  if (user.x <= door.x && user.y <= door.y){
-    state = 'ending';
-  }
+  //
+  // if(weapon.bowTaken && !bowPlay){
+  //   bowPickup.play();
+  //   bowPlay = true;
+  // }
+  //
+  // //checks if you can shoot
+  // if(key === 'a' && weapon.bowTaken === true && weapon.arrows >= 1){
+  //   //sets arrow to user's position and allows entry to function
+  //   weapon.arrowX = user.x;
+  //   weapon.arrowY = user.y + 40;
+  //   arrowHit = false;
+  // }
+  // if(!arrowHit){
+  //   shoot();
+  // }
+  //
+  // //----- GAME END -----
+  // if (user.x <= door.x && user.y <= door.y){
+  //   state = 'ending';
+  // }
 }
 
 //----- END SCREEN -----

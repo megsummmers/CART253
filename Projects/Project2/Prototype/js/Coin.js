@@ -9,11 +9,12 @@ class Coin {
     this.coinCounted = false;
     this.image = imgCoin;
     this.sound = coinPickup
+    //raycasting
+    this.boundary = [createVector(x, y), createVector(x + this.size, y), createVector(x, y), createVector(x, y + this.size), createVector(x, y + this.size), createVector(x + this.size, y + this.size),  createVector(x + this.size, y), createVector(x + this.size, y + this.size)];
   }
 
   display(){
     push();
-    imageMode(CENTER);
     tint(this.color, this.color, this.color, this.alpha);
     image(imgCoin, this.x, this.y, this.size, this.size);
     pop();

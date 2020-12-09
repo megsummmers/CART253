@@ -18,18 +18,18 @@ class Ray {
     pop();
   }
   //find the point of intersection of the ray and
-  checkforWall(corner1, corner2) {
+  intersectCheck(line1, line2) {
     //wall lines
-    const x1 = corner1.x;
-    const y1 = corner1.y;
-    const x2 = corner2.x;
-    const y2 = corner2.y;
+    const x1 = line1.x;
+    const y1 = line1.y;
+    const x2 = line2.x;
+    const y2 = line2.y;
     //ray lines
-    const x3 = this.pos.x;
+    const x3 = this.pos.x; //center/static point
     const y3 = this.pos.y;
-    const x4 = this.pos.x + this.dir.x;
+    const x4 = this.pos.x + this.dir.x; //extended point
     const y4 = this.pos.y + this.dir.y;
-
+    //den
     const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
     if (den == 0) {
       return;
@@ -46,28 +46,32 @@ class Ray {
       return;
     }
   }
-  //check if lines intersect
-  checkforRect(rectX1, rectY1, rectX2, rectY2){
-    //ray lines
-    const x1 = this.pos.x; //center point
-    const y1 = this.pos.y;
-    const x2 = this.pos.x + this.dir.x; //extended point
-    const y2 = this.pos.y + this.dir.y;
-
-    //enemy/coin/door lines
-    const x3 = rectX1;
-    const y3 = rectY1;
-    const x4 = rectX2;
-    const y4 = rectY2;
-
-    //calculates the direction of the lines
-    let uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
-    let uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
-    console.log(uA, uB);
-    // if uA and uB are between 0-1, lines are colliding
-    if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
-      return true;
-    }
-    return false;
-  }
+  // //check if lines intersect
+  // checkforRect(rectX1, rectY1, rectX2, rectY2){
+  //   //enemy/coin/door lines
+  //   const x1 = rectX1;
+  //   const y1 = rectY1;
+  //   const x2 = rectX2;
+  //   const y2 = rectY2;
+  //
+  //   //ray lines
+  //   const x3 = this.pos.x; //center point
+  //   const y3 = this.pos.y;
+  //   const x4 = this.pos.x + this.dir.x; //extended point
+  //   const y4 = this.pos.y + this.dir.y;
+  //
+  //   //calculates the direction of the lines
+  //   const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+  //   if (den == 0) {
+  //     return;
+  //   }
+  //
+  //   const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+  //   const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+  //   if (t > 0 && t < 1 && u > 0) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 }

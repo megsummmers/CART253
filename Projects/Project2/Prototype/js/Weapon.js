@@ -20,7 +20,6 @@ class Bow {
 
   display(){
     push();
-    imageMode(CENTER);
     tint(this.color, this.color, this.color, this.alpha);
     image(imgWeapon, this.x, this.y, this.size, this.size);
     tint(this.color, this.color, this.color, this.alphaArrowL);
