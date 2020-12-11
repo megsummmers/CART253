@@ -194,7 +194,6 @@ let level = 1;
 let itemNum = 0;
 let chosen = false;
 let cutsceneNum = 1;
-let cutsceneArea = "middle";
 let textNum = 0;
 //timer variables
 let frameCounter = 0;
@@ -870,10 +869,10 @@ function travelCutscene(){
         storyText.avatarAlphaR = 0;
         storyText.avatarAlphaL = 255;
       }
-
+      //moves user to 
       if(storyText.avatarX === width){
         cutsceneArea = "dungeon";
-      } //fix this
+      } //prevents user from going backwards
       if (storyText.avatarX === 1){
         push();
         stroke(0);
@@ -895,6 +894,8 @@ function travelCutscene(){
 }
 
 //Gameplay function for level one of the dungeon
+//each level has a similar function that controls
+//all of the entities in the maze
 function level1(){
   //----- GAME TIMER -----
   frameCounter++;
@@ -944,12 +945,13 @@ function level1(){
   user.display();
   user.move();
 
+//plays sounds effect when bow is picked up
   if(weapon1.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
 
-  //while an arrow isn't flying
+  //Updates arrows coords while it isn't shot
   if (arrowHit){
     weapon1.arrowX = user.x;
     weapon1.arrowY = user.y;
@@ -987,7 +989,6 @@ function level2(){
   //----- RAYCASTING -----
   particle.update(user.x, user.y);
   particle.raycast([...maze2.walls, ...maze2.coins, ...maze2.weapon, ...maze2.doors, ...maze2.spiders]);
-  //particle.raycast(maze1.weapon);
 
   //----- WALL COLLISION SETUP -----
   for(let i = 0; i < maze2.walls.length; i++){
@@ -1026,12 +1027,13 @@ function level2(){
   user.display();
   user.move();
 
+  //plays sound effect when bow is picked up
   if(weapon2.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
 
-  //while an arrow isn't flying
+  //Updates arrows coords while it isn't shot
   if (arrowHit){
     weapon2.arrowX = user.x;
     weapon2.arrowY = user.y;
@@ -1100,7 +1102,7 @@ function level3(){
     spider.move();
   }
 
-  //----- TBA || WEAPON SETUP AND DISPLAY -----
+  //----- WEAPON SETUP AND DISPLAY -----
   user.weaponProximity(weapon2);
   weapon3.display();
 
@@ -1108,12 +1110,12 @@ function level3(){
   user.display();
   user.move();
 
-  //bow has yet to be added to the second level
+  //PLays sound effect when bow is picked up
   if(weapon3.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
-  //while an arrow isn't shot
+  //Updates arrows coords while it isn't shot
   if (arrowHit){
     weapon3.arrowX = user.x;
     weapon3.arrowY = user.y;
@@ -1132,7 +1134,7 @@ function level3(){
     user.w = 47;
     user.h = 60;
   }
-  //----- USES EXIT DOOR TO END GAME -----
+  //----- USES EXIT DOOR -----
   if (user.x >= goaldoor3.x && user.y >= goaldoor3.y){
     level = 4;
     user.x = startdoor4.x + 5;
@@ -1182,7 +1184,7 @@ function level4(){
     spider.move();
   }
 
-  //----- TBA || WEAPON SETUP AND DISPLAY -----
+  //----- WEAPON SETUP AND DISPLAY -----
   user.weaponProximity(weapon3);
   weapon4.display();
 
@@ -1190,12 +1192,12 @@ function level4(){
   user.display();
   user.move();
 
-  //bow has yet to be added to the second level
+  //plauys sound effect when bow is picked up
   if(weapon4.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
-  //while an arrow isn't shot
+  //Updates arrows coords while it isn't shot
   if (arrowHit){
     weapon4.arrowX = user.x;
     weapon4.arrowY = user.y;
@@ -1212,7 +1214,7 @@ function level4(){
     user.x = goaldoor3.x - 5;
     user.y = goaldoor3.y - 5;
   }
-  //----- USES EXIT DOOR TO END GAME -----
+  //----- USES EXIT DOOR -----
   if (user.x >= goaldoor4.x - 25 && user.x <= goaldoor4.x + 25 && user.y >= goaldoor4.y){
     level = 5;
     user.x = startdoor5.x + 5;
@@ -1224,7 +1226,7 @@ function level5(){
   //----- GAME TIMER -----
   frameCounter++;
 
-  //----- STARTING & EXIT DOOR SETUP -----
+  //----- STARTING DOOR SETUP -----
   startdoor5.display();
 
   //----- RAYCASTING -----
@@ -1261,7 +1263,7 @@ function level5(){
     spider.move();
   }
 
-  //----- TBA || WEAPON SETUP AND DISPLAY -----
+  //----- WEAPON SETUP AND DISPLAY -----
   user.weaponProximity(weapon5);
   weapon5.display();
 
@@ -1269,12 +1271,12 @@ function level5(){
   user.display();
   user.move();
 
-  //bow has yet to be added to the second level
+  //plays sound effect when bow is piacked up
   if(weapon5.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
-  //while an arrow isn't shot
+  //Updates arrows coords while it isn't shot
   if (arrowHit){
     weapon5.arrowX = user.x;
     weapon5.arrowY = user.y;
@@ -1284,21 +1286,12 @@ function level5(){
     shoot(weapon5);
     keyCode = 34;
   }
-  //525, 25, 38, 60 max y 100
   //----- USES START DOOR TO RETURN TO LAST LEVEL -----
   if (user.x <= startdoor5.x +50 && user.x >= startdoor5.x -25 && user.y <= startdoor5.y){
     level = 4;
     user.x = goaldoor4.x - 5;
     user.y = goaldoor4.y - 5;
   }
-  // //----- USES EXIT DOOR TO END GAME -----
-  // if (user.x >= goaldoor5.x - 25 && user.x <= goaldoor5.x + 25 && user.y >= goaldoor5.y){
-  //   if(coinCount >= 5){
-  //     state = 'shop';
-  //   } else {
-  //     state = 'ending';
-  //   }
-  // }
 }
 
 function shop(){
@@ -1347,9 +1340,12 @@ function shop(){
     text(shopItems.names[itemNum], width /2, 800);
     pop();
   } else if (chosen){
+    //once the player chooses an item it checks if they have enough coins
     if(coinCount >= shopItems.prices[itemNum]){
+      //if they do have enough it goes to ending
       state = 'ending';
     } else {
+      //if not it sends a message and goes back
       shopTimer++;
       push();
       stroke(0);
@@ -1725,12 +1721,14 @@ function shoot(weapon){
         }
       }
     }
+    //if no spiders were hit, arrowHit is false
     arrowHit = false;
   //ends arrow animation
   } else {
     if (!arrowHit && !spiderHit){
       weapon.arrows = weapon.arrows - 1;
     }
+    //resets variables
     weapon.alphaArrowR = 0;
     weapon.alphaArrowL = 0;
     weapon.arrowX = user.x;
