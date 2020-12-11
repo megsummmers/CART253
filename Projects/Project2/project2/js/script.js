@@ -9,6 +9,10 @@ Grab as many gold coins as you can and get out with your loot
 without getting hit by a spider. If you find a bow and arrow
 you can kill the spiders by shooting them. Once out of the
 dungeon, you head over to the shop to buy an item.
+
+Things to add later on:
+-Boss level, giant spider with more health and/or timer
+-Storyline/animation for opening and/or ending
 **************************************************/
 "use strict";
 
@@ -102,7 +106,7 @@ let spiderSettings = {
   movementH: "horizontal", movementV: "vertical",
   killCount: 0
 };
-//arrays for shop
+
 let shopItems = {
   images: [],
   names: ["wonky 'you tried' sticker", "A can of soda", "A cute little plant", "Avatar 1.0 trophy", "Trophy of pure awesomeness"],
@@ -114,70 +118,51 @@ let shopItems = {
 };
 
 let storyText = {
-  //dialogue for cutscenes
   cutscene1: [
     "Wow, it's a lot hotter then I thought it was...",
-    "Maybe I should go get a soda from the shop?",
+    "Maybe should go get a soda from the shop?",
     "Oh wait...",
     "I have no coins left",
     "...",
     "Maybe my parents were right about getting a job.",
     "Hey wait! There's that dungeon to the left of my house.",
     "Maybe it has some coins in it?",
-    "I guess I can check it out",
-    " "
+    "No hurt in checking it out I guess!"
   ],
-  cutscene2: [
-    "There's the cave that leads to the Dungeon!",
-    "It's uh- a lot spookier then I remember...",
-    "The 'DANGER CAVE SPIDERS' sign seems pretty...inviting.",
-    "...",
-    "It'll be fine, I'll be in and out before anything bad happens",
-    " ",
+  custscene2: [
+    "Well it doesn't look too bad",
+    "The 'DANGER CAVE SPIDERS' sign seems pretty inviting.",
+    "It'll be fine, I'll be in and out before anything happens!"
   ],
-  cutscene3: [
+  cutscene3_1: [
     "Well that was... intense",
-    "I don't know how I got out of there alive with all those spiders",
+    "Don't know how I got out of there alive with all those spiders",
     "There were so many of them!",
-    "Welp, at least I can get a soda now!",
-    "Worth it.",
-    " "
+    "Welp, at least I can get a sode now!",
+    "Worth it."
   ],
-  cutscene3_2: [
+  custscene3_2: [
     "Well that was... intense",
     "Don't know how I got out of there alive with all those spiders",
     "There were so many of them!",
     "Oh no... I didn't get enough coins for the soda...",
-    "Guess I'll go home and get some... water I guess?",
-    " "
+    "Guess I'll go home and get... water I guess"
   ],
-  cutscene5: [
-    "Finally made it to the shop!",
-    "That took way too long...",
-    "Doesn't matter though, I finally made it",
-    "Let's get shopping!",
-  ],
-  //middle bg coords
   middleX: -370,
   middleY: 0,
-  //dungeon bg coords
   dungeonX: 0,
   dungeonY: 0,
-  //Shop bg coords
   shopX: -740,
   shopY: 0,
-  //avatar coords
   avatarX: 500,
   avatarY: 800,
-  //alpha for both images of the avatar
-  //allows them to switch directions when walking
   avatarAlphaR: 255,
   avatarAlphaL: 0
 }
 
 //variables
-let state = "gameplay";
-let ending = 6;
+let state = "cutscene";
+let ending = 0;
 let coinCount = 0;
 let user;
 let walls;
@@ -205,10 +190,11 @@ let mousePress;
 let winSoundPlay = false;
 let loseSoundPlay = false;
 let bowPlay = false;
-let level = 4;
+let level = 1;
 let itemNum = 0;
 let chosen = false;
 let cutsceneNum = 1;
+let cutsceneArea = "middle";
 let textNum = 0;
 //timer variables
 let frameCounter = 0;
@@ -246,7 +232,6 @@ let coinPickup;
 
 //----- IMAGE PRELOAD -----
 function preload(){
-  //images
   imgCoin = loadImage ('assets/images/gold-coin.gif');
   imgSpider = loadImage ('assets/images/pixel-spider.gif');
   imgDoor = loadImage ('assets/images/pixel-door.jpeg');
@@ -281,11 +266,10 @@ function setup(){
   createCanvas(1000, 1000);
   noStroke();
 
-  //user initialize w/ level 1-2 proportions
   let userSettings = {
     x: 30,
     y: 30,
-    w: 38, h: 60,
+    w: 50, h: 60,
     imageGuyL: imageGuyL,
     imageGuyR: imageGuyR,
     imageGirlL: imageGirlL,
@@ -294,8 +278,6 @@ function setup(){
     imageThemR: imageThemR
   };
   user = new User(userSettings);
-
-  //typewriter initialize
   typewriter = new Typewriter();
 
   //level 1 bow weapon1
@@ -308,13 +290,13 @@ function setup(){
   maze3.weapon.push(new Bow(925, 275, 35, imgWeapon, imgArrowL, imgArrowR));
   weapon3 = maze3.weapon[0];
   //level 4 bow
-  maze4.weapon.push(new Bow(700, 950, 35, imgWeapon, imgArrowL, imgArrowR));
+  maze4.weapon.push(new Bow(725, 975, 35, imgWeapon, imgArrowL, imgArrowR));
   weapon4 = maze4.weapon[0];
   //level 5 bow
   maze5.weapon.push(new Bow(950, 425, 35, imgWeapon, imgArrowL, imgArrowR));
   weapon5 = maze5.weapon[0];
 
-  //raycasting particle initialize
+  //raycasting
   particle = new Particle();
 
   //Wall Initialization level 1
@@ -348,7 +330,7 @@ function setup(){
   maze2.walls.push(new Wall(700, 700, 200, 200));
   maze2.walls.push(new Wall(800, 400, 200, 200));
   maze2.walls.push(new Wall(800, 100, 200, 100));
-  maze2.walls.push(new Wall(800, 300, 100, 100));
+  maze2.walls.push(new Wall(800, 200, 100, 100));
   //outer boundaries for raycasting
   maze2.walls.push(new Wall(0, 0, width, 0));
   maze2.walls.push(new Wall(width, 0, width, height));
@@ -398,12 +380,12 @@ function setup(){
   maze4.walls.push(new Wall(300, 700, 450, 150));
   maze4.walls.push(new Wall(400, 600, 100, 400));
   maze4.walls.push(new Wall(550, 0, 100, 150));
-  maze4.walls.push(new Wall(500, 200, 250, 50));
+  maze4.walls.push(new Wall(500, 200, 350, 50));
   maze4.walls.push(new Wall(550, 200, 50, 150));
   maze4.walls.push(new Wall(550, 600, 200, 50));
   maze4.walls.push(new Wall(600, 900, 100, 100));
   maze4.walls.push(new Wall(700, 0, 150, 50));
-  maze4.walls.push(new Wall(650, 100, 100, 50));
+  maze4.walls.push(new Wall(650, 100, 150, 50));
   maze4.walls.push(new Wall(800, 100, 100, 200));
   maze4.walls.push(new Wall(650, 300, 300, 250));
   maze4.walls.push(new Wall(800, 500, 100, 200));
@@ -432,7 +414,7 @@ function setup(){
   maze5.walls.push(new Wall(300, 100, 350, 200));
   maze5.walls.push(new Wall(200, 400, 50, 190));
   maze5.walls.push(new Wall(300, 350, 300, 250));
-  maze5.walls.push(new Wall(200, 550, 500, 50));
+  maze5.walls.push(new Wall(200, 550, 200, 500));
   maze5.walls.push(new Wall(400, 600, 50, 400));
   maze5.walls.push(new Wall(450, 650, 250, 100));
   maze5.walls.push(new Wall(500, 800, 250, 150));
@@ -466,7 +448,7 @@ function setup(){
   maze2.coins.push(new Coin(925, 25, 50, imgCoin, coinPickup));
 
   //Level 3 Coin Initialization
-  maze3.coins.push(new Coin(100, 760, 35, imgCoin, coinPickup));
+  maze3.coins.push(new Coin(60, 760, 35, imgCoin, coinPickup));
   maze3.coins.push(new Coin(360, 910, 35, imgCoin, coinPickup));
   maze3.coins.push(new Coin(510, 660, 35, imgCoin, coinPickup));
   maze3.coins.push(new Coin(860, 10, 35, imgCoin, coinPickup));
@@ -507,7 +489,7 @@ function setup(){
   maze4.spiders.push(new Spider(500, 250, 50, 250, 350, spiderSettings.movementV, spiderSettings.medSpeed, imgSpider));
 
   //Level 5 Spider Initialization
-  maze5.spiders.push(new Spider(150, 350, 50, 350, 800, spiderSettings.movementV, spiderSettings.medSpeed, imgSpider));
+  maze5.spiders.push(new Spider(150, 350, 50, 350, 850, spiderSettings.movementV, spiderSettings.medSpeed, imgSpider));
   maze5.spiders.push(new Spider(700, 250, 50, 650, 950, spiderSettings.movementH, spiderSettings.slowSpeed, imgSpider));
   maze5.spiders.push(new Spider(600, 750, 50, 600, 950, spiderSettings.movementH, spiderSettings.slowSpeed, imgSpider));
 
@@ -525,10 +507,11 @@ function setup(){
 
   //level 4 door
   maze4.doors.push(new Door(25, 25, 38, 60, imgDoor));
-  maze4.doors.push(new Door(525, 925, 38, 60, imgDoor));
+  maze4.doors.push(new Door(550, 950, 38, 60, imgDoor));
 
   //level 5 door
   maze5.doors.push(new Door(525, 25, 38, 60, imgDoor));
+  //maze5.doors.push(new Door(550, 950, 38, 60, imgDoor));
 
   //universal door Variables
   startdoor1 = maze1.doors[0];
@@ -540,8 +523,8 @@ function setup(){
   startdoor4 = maze4.doors[0];
   goaldoor4 = maze4.doors[1];
   startdoor5 = maze5.doors[0];
+  //goaldoor5 = maze5.doors[1];
 
-  //push prize images into shop array
   shopItems.images.push(img5prize);
   shopItems.images.push(img10prize);
   shopItems.images.push(img15prize);
@@ -550,8 +533,9 @@ function setup(){
 }
 
 function draw(){
-  //state CONTROLS
-  //Goes between all the different pieces of the game
+  //background
+  background(bg.r, bg.g, bg.b);
+  //state
   if (state === 'title'){
     titleScreen();
   } else if (state === 'howToPlay'){
@@ -590,14 +574,13 @@ function titleScreen(){
   text("PRESS 'H' FOR INSTRUCTIONS", 500, 525);
   text("PRESS ENTER TO START", 500, 600);
   pop();
-  //transition to how to play screen
+
   if(key === 'h'){
     state = 'howToPlay';
   }
 }
 
 function howToPlay(){
-  //background and permanent text
   push();
   background(imgTitleBlur);
   textAlign(CENTER);
@@ -610,12 +593,10 @@ function howToPlay(){
   pop();
 
   if(page === 1){
-    //user page
     push();
     imageMode(CENTER);
-    image(imageGuyR, 250, 350, 200, 200);
-    image(imageGirlL, 750, 350, 200, 200);
-    image(imageThemR, 500, 450, 200, 200);
+    image(imageGuyR, 300, 350, 100, 100);
+    image(imageGirlL, 700, 350, 100, 100);
     textSize(40);
     textAlign(CENTER);
     text("You control your character with the arrow keys,", 500, 650);
@@ -625,7 +606,6 @@ function howToPlay(){
     text("Hit return to go back to the title screen", 500, 950);
     pop();
   } else if (page === 2){
-    //coin page
     push();
     imageMode(CENTER);
     image(imgCoin, 300, 350, 100, 100);
@@ -642,7 +622,6 @@ function howToPlay(){
     text("Hit return to go back to the title screen", 500, 950);
     pop();
   } else if (page === 3){
-    //spider page
     push();
     imageMode(CENTER);
     image(imgSpider, 500, 350, 200, 200);
@@ -658,7 +637,6 @@ function howToPlay(){
     text("Hit return to go back to the title screen", 500, 950);
     pop();
   } else if (page === 4){
-    //bow/weapon page
     push();
     imageMode(CENTER);
     image(imgArrowL, 350, 325, 150, 150);
@@ -714,479 +692,209 @@ function avatarScreen(){
   pop();
 }
 
-//cutscenes to show the user going to the dungeon
-//and returning from the dungeon to go to the shop
 function travelCutscene(){
   background(255);
   if(cutsceneNum === 1){
-    push();
-    imageMode(LEFT);
-    image(imgMiddlebg, storyText.middleX, storyText.middleY);
-    pop();
-    //changes avatar based on user's pick
-    if (user.avatar === "guy"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGuyL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGuyR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "girl"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGirlL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGirlR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "non-binary"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageThemL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageThemR, storyText.avatarX, storyText.avatarY);
-      pop();
-    }
-    //dialogue
-    if(textNum <= 9){
-      //show textbox
-      push();
-      stroke(0);
-      strokeWeight(3);
-      rectMode(CENTER);
-      fill(255, 255, 255, 100);
-      rect(500, 120, 900, 150);
-      pop();
+    if(cutsceneArea === "middle"){
+      imageMode(LEFT);
+      //-740 farthest right, 0 farthest left, -370 center
+      image(imgMiddlebg, storyText.middleX, storyText.middleY);
+      if (user.avatar === "guy"){
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, storyText.avatarAlphaL)
+        image(imageGuyL, storyText.avatarX, storyText.avatarY);
+        tint(255, 255, 255, storyText.avatarAlphaR)
+        image(imageGuyR, storyText.avatarX, storyText.avatarY);
+        pop();
+      } else if (user.avatar === "girl"){
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, storyText.avatarAlphaL)
+        image(imageGirlL, storyText.avatarX, storyText.avatarY);
+        tint(255, 255, 255, storyText.avatarAlphaR)
+        image(imageGirlR, storyText.avatarX, storyText.avatarY);
+        pop();
+      } else if (user.avatar === "non-binary"){
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, storyText.avatarAlphaL)
+        image(imageThemL, storyText.avatarX, storyText.avatarY);
+        tint(255, 255, 255, storyText.avatarAlphaR)
+        image(imageThemR, storyText.avatarX, storyText.avatarY);
+        pop();
+      }
+
+      if(textNum <= 8){
+        //background rectangle for text
+        push();
+        stroke(0);
+        strokeWeight(3);
+        rectMode(CENTER);
+        fill(255, 255, 255, 100);
+        rect(500, 120, 900, 150);
+        pop();
+        //text
+        push();
+        textAlign(CENTER);
+        textSize(30);
+        fill(0);
+        text(storyText.cutscene1[textNum], 500, 120);
+        textSize(20);
+        fill(100, 100, 100);
+        text("hit enter to continue through the dialogue", 500, 175);
+        pop();
+      }
+
       //text with typewriter effect
-      typewriter.display();
-      push();
-      textAlign(CENTER);
-      textSize(20);
-      fill(100, 100, 100);
-      text("hit enter to continue through the dialogue", 500, 175);
-      pop();
-    }
+      // typewriter.display();
+      // typewriter.typewrite(storyText.cutscene1[textNum], 500, 120);
 
-    //Moves the character after the dialogue
-    if (keyIsDown(RIGHT_ARROW) && textNum > 8){
-      if (storyText.middleX <= -740){
-        storyText.avatarX+= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 0, width);
-      } else {
-        storyText.middleX-= 5;
+      if (keyIsDown(RIGHT_ARROW)){
+        if (storyText.middleX <= -740){
+          storyText.avatarX+= 5;
+          storyText.avatarX = constrain(storyText.avatarX, 0, width);
+        } else {
+          storyText.middleX-= 5;
+        }
+        //change avatar facing
+        storyText.avatarAlphaR = 255;
+        storyText.avatarAlphaL = 0;
+      } else if (keyIsDown(LEFT_ARROW)){
+        if (storyText.middleX >= 0){
+          storyText.avatarX-= 5;
+          storyText.avatarX = constrain(storyText.avatarX, 0, width);
+        } else {
+          storyText.middleX+= 5;
+        }
+        //change avatar facing
+        storyText.avatarAlphaR = 0;
+        storyText.avatarAlphaL = 255;
       }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 255;
-      storyText.avatarAlphaL = 0;
-    } else if (keyIsDown(LEFT_ARROW) && textNum > 8){
-      if (storyText.middleX >= 0){
-        storyText.avatarX-= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 50, width);
-      } else {
-        storyText.middleX+= 5;
-      }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 0;
-      storyText.avatarAlphaL = 255;
-    }
-    //Boundaries of the scene
-    if(storyText.avatarX === width){
-      //if they go all the way right they go to the dungeon
-      textNum = 0;
-      storyText.avatarX = 50;
-      cutsceneNum++;
-    } //if user tried to go backwards
-    if (storyText.avatarX === 50){
-      push();
-      stroke(0);
-      strokeWeight(3);
-      rectMode(CENTER);
-      fill(255, 255, 255, 100);
-      rect(500, 120, 900, 150);
-      pop();
-      //text
-      push();
-      textAlign(CENTER);
-      textSize(30);
-      fill(0);
-      text("Isn't the dungeon to the right of my house?", 500, 120);
-      pop();
-    }
-    //BEFORE DUNGEON CUTSCENE
-  } else if (cutsceneNum === 2){
-    push();
-    imageMode(LEFT);
-    //Change the background image and coords
-    image(imgDungeonbg, storyText.dungeonX, storyText.dungeonY);
-    pop();
-    //changes the avatar based on user's pick
-    if (user.avatar === "guy"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGuyL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGuyR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "girl"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGirlL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGirlR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "non-binary"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageThemL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageThemR, storyText.avatarX, storyText.avatarY);
-      pop();
-    }
-    //dialogue
-    if(textNum <= 5 && storyText.avatarX >= 500 && storyText.avatarX <= 550){
-      //show textbox
-      push();
-      stroke(0);
-      strokeWeight(3);
-      rectMode(CENTER);
-      fill(255, 255, 255, 100);
-      rect(500, 120, 900, 150);
-      pop();
-      //text
-      typewriter.display();
-      push();
-      textAlign(CENTER);
-      textSize(20);
-      fill(100, 100, 100);
-      text("hit enter to continue through the dialogue", 500, 175);
-      pop();
-    }
-    //Moves the character after the dialogue
-    if (keyIsDown(RIGHT_ARROW)){
-      if (storyText.dungeonX <= -740){
-        storyText.avatarX+= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 0, width);
-      } else {
-        storyText.dungeonX-= 5;
-      }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 255;
-      storyText.avatarAlphaL = 0;
-    } else if (keyIsDown(LEFT_ARROW)){
-      if (storyText.dungeonX >= 0){
-        storyText.avatarX-= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 0, width);
-      } else {
-        storyText.dungeonX+= 5;
-      }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 0;
-      storyText.avatarAlphaL = 255;
-    }
-    //Boundaries of the scene
-    if(storyText.avatarX === 810){
-      //The user enters the dungeon
-      textNum = 0;
-      storyText.avatarX = 750;
-      cutsceneNum++;
-      state = 'gameplay';
-    }
-    //if user tried to go backwards
-    if(storyText.avatarX < 0){
-      push();
-      stroke(0);
-      strokeWeight(3);
-      rectMode(CENTER);
-      fill(255, 255, 255, 100);
-      rect(500, 120, 900, 150);
-      pop();
-      //text
-      push();
-      textAlign(CENTER);
-      textSize(30);
-      fill(0);
-      text("I came all this way, might as well go into the dungeon", 500, 120);
-      pop();
-    }
-    //AFTER DUNGEON CUTSCENE
-  } else if (cutsceneNum = 3){
-    push();
-    imageMode(LEFT);
-    image(imgDungeonbg, storyText.dungeonX, storyText.dungeonY);
-    pop();
-    if (user.avatar === "guy"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGuyL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGuyR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "girl"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGirlL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGirlR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "non-binary"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageThemL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageThemR, storyText.avatarX, storyText.avatarY);
-      pop();
-    }
 
-    if(textNum <= 5 && storyText.avatarX === 750){
-      //show textbox
-      push();
-      stroke(0);
-      strokeWeight(3);
-      rectMode(CENTER);
-      fill(255, 255, 255, 100);
-      rect(500, 120, 900, 150);
-      pop();
-      //text
-      typewriter.display();
-      push();
-      textAlign(CENTER);
-      textSize(20);
-      fill(100, 100, 100);
-      text("hit enter to continue through the dialogue", 500, 175);
-      pop();
-    }
-    //Moves the character after the dialogue
-    if (keyIsDown(RIGHT_ARROW)){
-      if (storyText.dungeonX <= -740){
-        storyText.avatarX+= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 0, width);
-      } else {
-        storyText.dungeonX-= 5;
+      if(storyText.avatarX === width){
+        textNum = 0;
+        storyText.avatarX = 50;
+        cutsceneArea = "dungeon";
+      } //fix this
+      if (storyText.avatarX === 1){
+        push();
+        stroke(0);
+        strokeWeight(3);
+        rectMode(CENTER);
+        fill(255, 255, 255, 100);
+        rect(500, 120, 900, 150);
+        pop();
+        //text
+        push();
+        textAlign(CENTER);
+        textSize(30);
+        fill(0);
+        text("I can't go to the shop without some coins", 500, 120);
+        pop();
       }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 255;
-      storyText.avatarAlphaL = 0;
-    } else if (keyIsDown(LEFT_ARROW)){
-      if (storyText.dungeonX >= 0){
-        storyText.avatarX-= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 0, width);
-      } else {
-        storyText.dungeonX+= 5;
+      //DUNGEON PART OF CUTSCENE 1
+    } else if (cutsceneArea === "dungeon"){
+      imageMode(LEFT);
+      //-740 farthest right, 0 farthest left, -370 center
+      image(imgDungeonbg, storyText.dungeonX, storyText.dungeonY);
+      if (user.avatar === "guy"){
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, storyText.avatarAlphaL)
+        image(imageGuyL, storyText.avatarX, storyText.avatarY);
+        tint(255, 255, 255, storyText.avatarAlphaR)
+        image(imageGuyR, storyText.avatarX, storyText.avatarY);
+        pop();
+      } else if (user.avatar === "girl"){
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, storyText.avatarAlphaL)
+        image(imageGirlL, storyText.avatarX, storyText.avatarY);
+        tint(255, 255, 255, storyText.avatarAlphaR)
+        image(imageGirlR, storyText.avatarX, storyText.avatarY);
+        pop();
+      } else if (user.avatar === "non-binary"){
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, storyText.avatarAlphaL)
+        image(imageThemL, storyText.avatarX, storyText.avatarY);
+        tint(255, 255, 255, storyText.avatarAlphaR)
+        image(imageThemR, storyText.avatarX, storyText.avatarY);
+        pop();
       }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 0;
-      storyText.avatarAlphaL = 255;
-    }
-    //Boundaries of the scene
-    if(storyText.avatarX <= 0 && coinCount >= 5){
-      //The user enters the dungeon
-      textNum = 0;
-      cutsceneNum++;
-    } else if (storyText.avatarX <= 0 && coinCount <= 4){
-      state = 'ending';
-    }
-    //if user tried to go backwards
-    if(storyText.avatarX >= 810){
-      push();
-      stroke(0);
-      strokeWeight(3);
-      rectMode(CENTER);
-      fill(255, 255, 255, 100);
-      rect(500, 120, 900, 150);
-      pop();
-      //text
-      push();
-      textAlign(CENTER);
-      textSize(30);
-      fill(0);
-      text("No way am I going back in there...", 500, 120);
-      pop();
-    }
-    //TRAVEL SCENE FROM DUNGEON TO SHOP
-  } else if (cutsceneNum === 4){
-    push();
-    imageMode(LEFT);
-    image(imgMiddlebg, storyText.middleX, storyText.middleY);
-    pop();
-    if (user.avatar === "guy"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGuyL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGuyR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "girl"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGirlL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGirlR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "non-binary"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageThemL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageThemR, storyText.avatarX, storyText.avatarY);
-      pop();
-    }
-    //Moves the character after the dialogue
-    if (keyIsDown(RIGHT_ARROW) && textNum > 8){
-      if (storyText.middleX <= -740){
-        storyText.avatarX+= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 0, width);
-      } else {
-        storyText.middleX-= 5;
-      }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 255;
-      storyText.avatarAlphaL = 0;
-    } else if (keyIsDown(LEFT_ARROW) && textNum > 8){
-      if (storyText.middleX >= 0){
-        storyText.avatarX-= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 50, width);
-      } else {
-        storyText.middleX+= 5;
-      }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 0;
-      storyText.avatarAlphaL = 255;
-    }
-    //Boundaries of the scene
-    if(storyText.avatarX < 0){
-      textNum = 0;
-      storyText.avatarX = 950;
-      cutsceneNum++;
-    }
-    //if user tried to go backwards
-    if (storyText.avatarX === width){
-      push();
-      stroke(0);
-      strokeWeight(3);
-      rectMode(CENTER);
-      fill(255, 255, 255, 100);
-      rect(500, 120, 900, 150);
-      pop();
-      //text
-      push();
-      textAlign(CENTER);
-      textSize(30);
-      fill(0);
-      text("The shop isn't this way", 500, 120);
-      pop();
-    }
-    //FINAL TRAVEL CUTSCENE TO THE SHOP
-  } else if (cutsceneNum === 5){
-    push();
-    imageMode(LEFT);
-    image(imgShopbg, storyText.shopX, storyText.shopY);
-    pop();
-    //changes avatar depending on user's pick
-    if (user.avatar === "guy"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGuyL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGuyR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "girl"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageGirlL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageGirlR, storyText.avatarX, storyText.avatarY);
-      pop();
-    } else if (user.avatar === "non-binary"){
-      push();
-      imageMode(CENTER);
-      tint(255, 255, 255, storyText.avatarAlphaL)
-      image(imageThemL, storyText.avatarX, storyText.avatarY);
-      tint(255, 255, 255, storyText.avatarAlphaR)
-      image(imageThemR, storyText.avatarX, storyText.avatarY);
-      pop();
-    }
 
-    if(textNum <= 3 && storyText.avatarX === 300){
-      //show textbox
-      push();
-      stroke(0);
-      strokeWeight(3);
-      rectMode(CENTER);
-      fill(255, 255, 255, 100);
-      rect(500, 120, 900, 150);
-      pop();
+      if(textNum <= 0 && storyText.avatarX >= 700){
+        //background rectangle for text
+        push();
+        stroke(0);
+        strokeWeight(3);
+        rectMode(CENTER);
+        fill(255, 255, 255, 100);
+        rect(500, 120, 900, 150);
+        pop();
+        //text
+        push();
+        textAlign(CENTER);
+        textSize(30);
+        fill(0);
+        text(storyText.cutscene1_2[textNum], 500, 120);
+        textSize(20);
+        fill(100, 100, 100);
+        text("hit enter to continue through the dialogue", 500, 175);
+        pop();
+      }
+
       //text with typewriter effect
-      typewriter.display();
-      push();
-      textAlign(CENTER);
-      textSize(20);
-      fill(100, 100, 100);
-      text("hit enter to continue through the dialogue", 500, 175);
-      pop();
-    }
+      // typewriter.display();
+      // typewriter.typewrite(storyText.cutscene1[textNum], 500, 120);
 
-    //Moves the character after the dialogue
-    if (keyIsDown(RIGHT_ARROW) && textNum > 8){
-      if (storyText.shopX <= -740){
-        storyText.avatarX+= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 0, width);
-      } else {
-        storyText.shopX-= 5;
+      if (keyIsDown(RIGHT_ARROW)){
+        if (storyText.middleX <= -740){
+          storyText.avatarX+= 5;
+          storyText.avatarX = constrain(storyText.avatarX, 0, width);
+        } else {
+          storyText.middleX-= 5;
+        }
+        //change avatar facing
+        storyText.avatarAlphaR = 255;
+        storyText.avatarAlphaL = 0;
+      } else if (keyIsDown(LEFT_ARROW)){
+        if (storyText.middleX >= 0){
+          storyText.avatarX-= 5;
+          storyText.avatarX = constrain(storyText.avatarX, 0, width);
+        } else {
+          storyText.middleX+= 5;
+        }
+        //change avatar facing
+        storyText.avatarAlphaR = 0;
+        storyText.avatarAlphaL = 255;
       }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 255;
-      storyText.avatarAlphaL = 0;
-    } else if (keyIsDown(LEFT_ARROW) && textNum > 8){
-      if (storyText.shopX >= 0){
-        storyText.avatarX-= 5;
-        storyText.avatarX = constrain(storyText.avatarX, 50, width);
-      } else {
-        storyText.shopX+= 5;
+
+      if(storyText.avatarX === width){
+        cutsceneArea = "dungeon";
+      } //fix this
+      if (storyText.avatarX === 1){
+        push();
+        stroke(0);
+        strokeWeight(3);
+        rectMode(CENTER);
+        fill(255, 255, 255, 100);
+        rect(500, 120, 900, 150);
+        pop();
+        //text
+        push();
+        textAlign(CENTER);
+        textSize(30);
+        fill(0);
+        text("I can't go to the shop without some coins", 500, 120);
+        pop();
       }
-      //change which way the avatar facing
-      storyText.avatarAlphaR = 0;
-      storyText.avatarAlphaL = 255;
-    }
-    //Boundaries of the scene
-    if(storyText.avatarX === 350){
-      //changes to shop state to buy their item
-      state = "shop";
-    }
-    //if user tried to go backwards
-    if (storyText.avatarX === 50){
-      push();
-      stroke(0);
-      strokeWeight(3);
-      rectMode(CENTER);
-      fill(255, 255, 255, 100);
-      rect(500, 120, 900, 150);
-      pop();
-      //text
-      push();
-      textAlign(CENTER);
-      textSize(30);
-      fill(0);
-      text("Let's go buy something!", 500, 120);
-      pop();
     }
   }
 }
 
 //Gameplay function for level one of the dungeon
-//each level has a similar function that sets up all the entitie within it
 function level1(){
   //----- GAME TIMER -----
   frameCounter++;
@@ -1228,22 +936,20 @@ function level1(){
     spider.move();
   }
 
-  //----- USER SETUP ----
-  user.display();
-  user.move();
-
   //----- WEAPON SETUP AND DISPLAY -----
   user.weaponProximity(weapon1);
   weapon1.display();
 
-  //Sound effect for picking up the bow
-  //bowPlay variable only allows it to play once
+  //----- USER SETUP ----
+  user.display();
+  user.move();
+
   if(weapon1.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
 
-  //Updates arrows position while an arrow isn't flying
+  //while an arrow isn't flying
   if (arrowHit){
     weapon1.arrowX = user.x;
     weapon1.arrowY = user.y;
@@ -1256,7 +962,11 @@ function level1(){
 
   // //----- USES START DOOR TO EXIT -----
   if (user.x <= startdoor1.x && user.y <= startdoor1.y){
-    state = 'cutscene';
+    if(coinCount >= 5){
+      state = 'shop';
+    } else {
+      state = 'ending';
+    }
   }
   //----- USES EXIT DOOR TO GO TO NEXT LEVEL -----
   if (user.x <= goaldoor1.x + 10 && user.y >= goaldoor1.y - 10){
@@ -1277,6 +987,7 @@ function level2(){
   //----- RAYCASTING -----
   particle.update(user.x, user.y);
   particle.raycast([...maze2.walls, ...maze2.coins, ...maze2.weapon, ...maze2.doors, ...maze2.spiders]);
+  //particle.raycast(maze1.weapon);
 
   //----- WALL COLLISION SETUP -----
   for(let i = 0; i < maze2.walls.length; i++){
@@ -1315,13 +1026,12 @@ function level2(){
   user.display();
   user.move();
 
-  //plays sound effect when bow is picked up
   if(weapon2.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
 
-  //Updates arrows position while it isn't flying
+  //while an arrow isn't flying
   if (arrowHit){
     weapon2.arrowX = user.x;
     weapon2.arrowY = user.y;
@@ -1339,13 +1049,11 @@ function level2(){
     user.y = goaldoor1.y - 5;
   }
   //----- USES EXIT DOOR TO GO TO NEXT LEVEL -----
-  if (user.x >= goaldoor2.x -25 && user.y >= goaldoor2.y && user.y <= goaldoor2.y +25){
+  if (user.x >= goaldoor2.x && user.y >= goaldoor2.y && user.y <= goaldoor2.y +25){
     level = 3;
     user.x = startdoor3.x + 5;
     user.y = startdoor3.y + 5;
-    //updates user size to be smaller
-    //levels 3-5 have smaller hallways so the user has to be smaller as well
-    user.w = 40;
+    user.w = 35;
     user.h = 40;
   }
 }
@@ -1392,21 +1100,20 @@ function level3(){
     spider.move();
   }
 
+  //----- TBA || WEAPON SETUP AND DISPLAY -----
+  user.weaponProximity(weapon2);
+  weapon3.display();
+
   //----- USER SETUP ----
   user.display();
   user.move();
 
-  //----- WEAPON SETUP AND DISPLAY -----
-  user.weaponProximity(weapon3);
-  weapon3.display();
-
-  //Sound effect for picking up the bow
-  //bowPlay variable only allows it to play once
+  //bow has yet to be added to the second level
   if(weapon3.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
-  //Updates arrows position while it isn't shot
+  //while an arrow isn't shot
   if (arrowHit){
     weapon3.arrowX = user.x;
     weapon3.arrowY = user.y;
@@ -1421,17 +1128,15 @@ function level3(){
   if (user.x <= startdoor3.x && user.y <= startdoor3.y){
     level = 2;
     user.x = goaldoor2.x;
-    user.y = goaldoor2.y -5;
-    //change user's dimensions
-    //level 1-2 are larger dimensions
-    user.w = 60;
+    user.y = goaldoor2.y + 5;
+    user.w = 47;
     user.h = 60;
   }
-  //----- USES EXIT DOOR -----
+  //----- USES EXIT DOOR TO END GAME -----
   if (user.x >= goaldoor3.x && user.y >= goaldoor3.y){
     level = 4;
     user.x = startdoor4.x + 5;
-    user.y = startdoor4.y;
+    user.y = startdoor4.y + 54
   }
 }
 
@@ -1477,21 +1182,20 @@ function level4(){
     spider.move();
   }
 
+  //----- TBA || WEAPON SETUP AND DISPLAY -----
+  user.weaponProximity(weapon3);
+  weapon4.display();
+
   //----- USER SETUP ----
   user.display();
   user.move();
 
-  //----- WEAPON SETUP AND DISPLAY -----
-  user.weaponProximity(weapon4);
-  weapon4.display();
-
-  //Sound effect for picking up the bow
-  //bowPlay variable only allows it to play once
+  //bow has yet to be added to the second level
   if(weapon4.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
-  //Updates arrow while it's not shot
+  //while an arrow isn't shot
   if (arrowHit){
     weapon4.arrowX = user.x;
     weapon4.arrowY = user.y;
@@ -1508,7 +1212,7 @@ function level4(){
     user.x = goaldoor3.x - 5;
     user.y = goaldoor3.y - 5;
   }
-  //----- USES EXIT DOOR -----
+  //----- USES EXIT DOOR TO END GAME -----
   if (user.x >= goaldoor4.x - 25 && user.x <= goaldoor4.x + 25 && user.y >= goaldoor4.y){
     level = 5;
     user.x = startdoor5.x + 5;
@@ -1520,7 +1224,7 @@ function level5(){
   //----- GAME TIMER -----
   frameCounter++;
 
-  //----- STARTING DOOR SETUP -----
+  //----- STARTING & EXIT DOOR SETUP -----
   startdoor5.display();
 
   //----- RAYCASTING -----
@@ -1557,22 +1261,20 @@ function level5(){
     spider.move();
   }
 
+  //----- TBA || WEAPON SETUP AND DISPLAY -----
+  user.weaponProximity(weapon5);
+  weapon5.display();
+
   //----- USER SETUP ----
   user.display();
   user.move();
 
-  //----- WEAPON SETUP AND DISPLAY -----
-  user.weaponProximity(weapon5);
-  weapon5.display();
-
-  //Sound effect for picking up the bow
-  //bowPlay variable only allows it to play once
+  //bow has yet to be added to the second level
   if(weapon5.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
-
-  //Updates arrows position while it isn't shot
+  //while an arrow isn't shot
   if (arrowHit){
     weapon5.arrowX = user.x;
     weapon5.arrowY = user.y;
@@ -1582,12 +1284,21 @@ function level5(){
     shoot(weapon5);
     keyCode = 34;
   }
+  //525, 25, 38, 60 max y 100
   //----- USES START DOOR TO RETURN TO LAST LEVEL -----
   if (user.x <= startdoor5.x +50 && user.x >= startdoor5.x -25 && user.y <= startdoor5.y){
     level = 4;
     user.x = goaldoor4.x - 5;
     user.y = goaldoor4.y - 5;
   }
+  // //----- USES EXIT DOOR TO END GAME -----
+  // if (user.x >= goaldoor5.x - 25 && user.x <= goaldoor5.x + 25 && user.y >= goaldoor5.y){
+  //   if(coinCount >= 5){
+  //     state = 'shop';
+  //   } else {
+  //     state = 'ending';
+  //   }
+  // }
 }
 
 function shop(){
@@ -1708,22 +1419,7 @@ function keyPressed(){
 
   //----- CUTSCENE ------
   if (keyCode === RETURN && state === 'cutscene'){
-    if (cutsceneNum === 1){
-      typewriter.typewrite(storyText.cutscene1[textNum], 500, 120);
-      textNum += 1;
-    } else if (cutsceneNum === 2){
-      typewriter.typewrite(storyText.cutscene2[textNum], 500, 120);
-      textNum += 1;
-    } else if (cutsceneNum === 3 && coinCount >= 4){
-      typewriter.typewrite(storyText.cutscene3[textNum], 500, 120);
-      textNum += 1;
-    } else if (cutsceneNum === 3 && coinCount <= 4){
-      typewriter.typewrite(storyText.cutscene3_2[textNum], 500, 120);
-      textNum += 1;
-    } else if (cutsceneNum === 5){
-      typewriter.typewrite(storyText.cutscene5[textNum], 500, 120);
-      textNum += 1;
-    }
+    textNum += 1;
   }
 
   //----- SHOP CONTROLS -----
@@ -1745,37 +1441,49 @@ function keyPressed(){
 function endScreen(endingNum){
   gameplayTimer = round(frameCounter/60);
   if (endingNum === 6){
-    //DEATH BY SPIDER
-    imageMode(CENTER);
-    image(imgDungeonbg, 150, 500);
+    //SPIDER DEATH
+    fill(bg.rr, bg.rg, bg.rb);
+    rectMode(CENTER);
+    rect(width/2, height/2, width, height);
+    fill(0, 0, 0);
     //lose
     textSize(50);
     textAlign(CENTER);
-    text('YOU LOSE!', width/2, 150);
-    text('Curse those nasty cave spiders', width/2, 200);
+    text('YOU LOSE!', width/2, height/3);
+    text('Curse those nasty cave spiders', width/2, height/3 + 80);
     imageMode(CENTER);
+    image(imgSpider, width/2, height/3 + height/3);
+    image(imgSpider, width/2 - 200, height/3 + height/3);
+    image(imgSpider, width/2 + 200, height/3 + height/3);
     //plays sound
     if(!loseSoundPlay){
       loseSound.play();
       loseSoundPlay = true;
     }
   } else if (spiderSettings.killCount === 15){
-    //User killed all the spider
-    //SPECIAL ENDING
     push();
     imageMode(CENTER);
-    image(imgDungeonbg, 150, 500);
+    image(imgbgDay, 500, 500, width, height);
     fill(0);
     textSize(75);
     textAlign(CENTER);
-    text('CONGRATULATIONS!', 500, 100);
-    textSize(45);
-    text('You rid the world of those awful cave spiders', 500, 175);
-    text('You are the true champion!', 500, 225);
+    text('CONGRATULATIONS!', 500, 300);
+    textSize(40);
+    text('You rid the world of those awful cave spiders', 500, 400);
+    text('You are the true champion!', 500, 450);
+    imageMode(CENTER);
+    image(imgCoin, width/2 + 240, height/3 + height/3);
+    image(imgCoin, width/2 + 120, height/3 + height/3);
+    image(imgCoin, width/2, height/3 + height/3);
+    image(imgCoin, width/2 - 120, height/3 + height/3);
+    image(imgCoin, width/2 - 240, height/3 + height/3);
+    image(imgCoin, width/2 - 120, height/3 + height/3);
+    image(imgCoin, width/2 + 120, height/3 + height/3);
+    image(imgSpider, 500, 900, 200, 200);
     if(user.avatr === 'girl'){
-      image(imageGirlL, 650, 775, 200, 200);
+      image(imageGirlL, 500, 825, 75, 75);
     } else if (user.avatar === 'guy'){
-      image(imageGuyL, 650, 775, 200, 200);
+      image(imageGuyL, 500, 825, 75, 75);
     }
     pop();
     if(!winSoundPlay){
@@ -1783,24 +1491,17 @@ function endScreen(endingNum){
       winSoundPlay = true;
     }
   } else if(coinCount === 0){
-    //NO COIN COLLECTED
+    //1 COIN COLLECTED
     push();
     imageMode(CENTER);
-    image(imgTitle, 500, 500, width, height);
+    image(imgbgDay, 500, 500, width, height);
     fill(0);
-    textSize(60);
+    textSize(75);
     textAlign(CENTER);
-    text('You win... I guess?', width/2, 100);
-    textSize(40);
-    text('You got no coins but your still alive so congratulations', width/2, 175);
+    text('You win... I guess?', width/2, height/3);
+    text('You got no coins but your still alive so congratulations', width/2, height/3 + 80);
     imageMode(CENTER);
-    if (user.avatar === "guy"){
-      image(imageGuyL, 600, 770);
-    } else if (user.avatar === "girl"){
-      image(imageGirlL, 600, 770);
-    } else if (user.avatar === "non-binary"){
-      image(imageThemL, 600, 770);
-    }
+    image(imgCoin, width/2, height/3 + height/3);
     pop();
     if(!winSoundPlay){
       winSound.play();
@@ -1810,139 +1511,104 @@ function endScreen(endingNum){
     //1 COIN COLLECTED
     push();
     imageMode(CENTER);
-    image(imgTitle, 500, 500, width, height);
+    image(imgbgDay, 500, 500, width, height);
     fill(0);
-    textSize(60);
+    textSize(75);
     textAlign(CENTER);
-    text('You win... I guess?', width/2, 100);
-    textSize(40);
-    text('If only you could have bought something', width/2, 175);
+    text('You win!', width/2, height/3);
+    text("But you only got " + coinCount + "/25 coins so you weren't able to buy anything...", width/2, height/3 + 80);
     imageMode(CENTER);
-    if (user.avatar === "guy"){
-      image(imageGuyL, 600, 770);
-    } else if (user.avatar === "girl"){
-      image(imageGirlL, 600, 770);
-    } else if (user.avatar === "non-binary"){
-      image(imageThemL, 600, 770);
-    }
+    image(imgCoin, width/2, height/3 + height/3);
     pop();
     if(!winSoundPlay){
       winSound.play();
       winSoundPlay = true;
     }
   } else if (coinCount >= 5 && coinCount <= 10){
-    //5-10 COINS COLLECTED
+    //2 COINS COLLECTED
     push();
     imageMode(CENTER);
-    image(imgTitle, 500, 500, width, height);
+    image(imgbgDay, 500, 500, width, height);
     fill(0);
-    textSize(60);
+    textSize(75);
     textAlign(CENTER);
-    text('You win!', width/2, 100);
-    textSize(50);
-    text('You got ' + coinCount + '/25 coins', width/2, 175);
+    text('You win!', width/2, height/3);
+    text('You got ' + coinCount + '/25 coins', width/2, height/3 + 80);
     imageMode(CENTER);
-    if (user.avatar === "guy"){
-      image(imageGuyL, 600, 770);
-    } else if (user.avatar === "girl"){
-      image(imageGirlL, 600, 770);
-    } else if (user.avatar === "non-binary"){
-      image(imageThemL, 600, 770);
-    }
-    image(shopItems.images[itemNum], 525, 820, 50, 50);
+    image(imgCoin, width/2 - 60, height/3 + height/3);
+    image(imgCoin, width/2 + 60, height/3 + height/3);
     pop();
     if(!winSoundPlay){
       winSound.play();
       winSoundPlay = true;
     }
   } else if (coinCount >= 11 && coinCount <= 17){
-    //11-17 COINS COLLECTED
+    //3 COINS COLLECTED
     push();
     imageMode(CENTER);
-    image(imgTitle, 500, 500, width, height);
+    image(imgbgDay, 500, 500, width, height);
     fill(0);
-    textSize(60);
+    textSize(75);
     textAlign(CENTER);
-    text('You win!', width/2, 100);
-    textSize(50);
-    text('You got ' + coinCount + '/25 coins', width/2, 175);
+    text('You win!', width/2, height/3);
+    text('You got ' + coinCount + '/25 coins', width/2, height/3 + 80);
     imageMode(CENTER);
-    image(imgCoin, 175, 120);
-    if (user.avatar === "guy"){
-      image(imageGuyL, 600, 770);
-    } else if (user.avatar === "girl"){
-      image(imageGirlL, 600, 770);
-    } else if (user.avatar === "non-binary"){
-      image(imageThemL, 600, 770);
-    }
-    image(shopItems.images[itemNum], 525, 820, 50, 50);
+    image(imgCoin, width/2, height/3 + height/3);
+    image(imgCoin, width/2 - 120, height/3 + height/3);
+    image(imgCoin, width/2 + 120, height/3 + height/3);
     pop();
     if(!winSoundPlay){
       winSound.play();
       winSoundPlay = true;
     }
   } else if (coinCount >= 18 && coinCount <= 24){
-    //18-24 COINS COLLECTED
+    //4 COINS COLLECTED
     push();
     imageMode(CENTER);
-    image(imgTitle, 500, 500, width, height);
+    image(imgbgDay, 500, 500, width, height);
     fill(0);
-    textSize(60);
+    textSize(75);
     textAlign(CENTER);
-    text('You win!', width/2, 100);
-    textSize(50);
-    text('You got ' + coinCount + '/25 coins', width/2, 175);
+    text('You win!', width/2, height/3);
+    text('You got ' + coinCount + '/25 coins', width/2, height/3 + 80);
     imageMode(CENTER);
-    image(imgCoin, 175, 120);
-    image(imgCoin, 825, 120);
-    if (user.avatar === "guy"){
-      image(imageGuyL, 600, 770);
-    } else if (user.avatar === "girl"){
-      image(imageGirlL, 600, 770);
-    } else if (user.avatar === "non-binary"){
-      image(imageThemL, 600, 770);
-    }
-    image(shopItems.images[itemNum], 525, 820, 50, 50);
+    image(imgCoin, width/2 - 180, height/3 + height/3);
+    image(imgCoin, width/2 - 60, height/3 + height/3);
+    image(imgCoin, width/2 + 60, height/3 + height/3);
+    image(imgCoin, width/2 + 180, height/3 + height/3);
     pop();
     if(!winSoundPlay){
       winSound.play();
       winSoundPlay = true;
     }
   } else if (coinCount === 25){
-    //ALL COINS COLLECTED
+    //ALL 5 COINS COLLECTED
     push();
-    image(imgShopbg, 0, 0);
-    fill(0);
-    textSize(60);
-    textAlign(CENTER);
-    text('You win!', width/2, 100);
-    textSize(50);
-    text('Wow! You got all the coins', width/2, 175);
     imageMode(CENTER);
-    if (user.avatar === "guy"){
-      image(imageGuyL, 490, 670, 200, 200);
-    } else if (user.avatar === "girl"){
-      image(imageGirlL, 450, 700);
-    } else if (user.avatar === "non-binary"){
-      image(imageThemL, 450, 700, 200, 200);
-    }
-    image(shopItems.images[itemNum], 400, 775, 75, 75);
+    image(imgbgDay, 500, 500, width, height);
+    fill(0);
+    textSize(75);
+    textAlign(CENTER);
+    text('You win!', width/2, height/3);
+    text('You got all the coins', width/2, height/3 + 80);
+    imageMode(CENTER);
+    image(imgCoin, width/2 + 240, height/3 + height/3);
+    image(imgCoin, width/2 + 120, height/3 + height/3);
+    image(imgCoin, width/2, height/3 + height/3);
+    image(imgCoin, width/2 - 120, height/3 + height/3);
+    image(imgCoin, width/2 - 240, height/3 + height/3);
+    image(imgCoin, width/2 - 120, height/3 + height/3);
+    image(imgCoin, width/2 + 120, height/3 + height/3);
     pop();
     if(!winSoundPlay){
       winSound.play();
       winSoundPlay = true;
     }
   }
-  //timer textbox
-  push();
-  fill(255, 255, 255, 200);
-  rectMode(CENTER);
-  rect(500, 935, 800, 75);
   //timer results
-  fill(0);
   textAlign(CENTER);
   textSize(40);
-  text("You were in the dungeon for " + gameplayTimer + " seconds", width/2, height - 50);
+  text("You finished in " + gameplayTimer + " seconds", width/2, height - 50);
 }
 
 function shoot(weapon){
