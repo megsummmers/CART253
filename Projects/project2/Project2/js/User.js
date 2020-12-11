@@ -21,6 +21,8 @@ class User {
      this.imageGuyR = config.imageGuyR;
      this.imageGirlL = config.imageGirlL;
      this.imageGirlR = config.imageGirlR;
+     this.imageThemL = config.imageThemL;
+     this.imageThemR = config.imageThemR;
      this.bowRotate = 0;
    }
 
@@ -69,22 +71,26 @@ class User {
 
    display() {
      //----- USER SETUP -----
-     if(this.avatar === "guy"){
+     if (this.avatar === "guy"){
        push();
-       //imageMode(CENTER);
        tint(255, 255, 255, user.alphaL);
        image(this.imageGuyL, this.x, this.y, this.w, this.h);
        tint(255, 255, 255, this.alphaR);
        image(this.imageGuyR, this.x, this.y, this.w, this.h);
        pop();
-
      } else if (this.avatar === "girl"){
        push();
-       //imageMode(CENTER);
        tint(255, 255, 255, this.alphaL);
        image(this.imageGirlL, this.x, this.y, this.w, this.h);
        tint(255, 255, 255, this.alphaR);
        image(this.imageGirlR, this.x, this.y, this.w, this.h);
+       pop();
+     } else if (this.avatar === "non-binary"){
+       push();
+       tint(255, 255, 255, this.alphaL);
+       image(this.imageThemL, this.x, this.y, this.w, this.h);
+       tint(255, 255, 255, this.alphaR);
+       image(this.imageThemR, this.x, this.y, this.w, this.h);
        pop();
      }
    }
@@ -115,7 +121,7 @@ class User {
 
   coinProximity(coin){
     if(!coin.taken){
-      let cD = dist(this.x, this.y, coin.x, coin.y);
+      let cD = dist(this.x + this.w/2, this.y + this.h/2, coin.x + coin.size/2, coin.y + coin.size/2);
       if (cD <= 40){
         coin.alpha = 0;
         coin.sound.play();
@@ -126,23 +132,25 @@ class User {
   }
 
   spiderProximity(spider){
-    let sD = dist(this.x, this.y, spider.x, spider.y);
+    //added half of their width and height to move the point of reference to the Center
+    //this is due to the images not being centered for raycasting
+    let sD = dist(this.x + this.w/2, this.y + this.h/2, spider.x + spider.size/2, spider.y + spider.size/2);
     if (sD <= 50 && !spider.killed){
-      spider.alpha = 0;
+      //spider.alpha = 0;
       return 6;
     } else if (sD > 200 && !spider.killed) {
-      spider.alpha -= 20;
-      spider.alpha = constrain(spider.alpha, 0, 255);
+      // spider.alpha -= 20;
+      // spider.alpha = constrain(spider.alpha, 0, 255);
       return 0;
     } else if (sD < 200 && !spider.killed) {
-      spider.alpha += 20;
-      spider.alpha = constrain(spider.alpha, 0, 255);
+      // spider.alpha += 20;
+      // spider.alpha = constrain(spider.alpha, 0, 255);
     }
   }
 
   weaponProximity(weapon){
     if(!weapon.taken){
-      let wD = dist(this.x, this.y, weapon.x, weapon.y);
+      let wD = dist(this.x + this.w/2, this.y + this.h/2, weapon.x + weapon.size/2, weapon.y + weapon.size/2);
       if (wD <= 50){
         weapon.alpha = 0;
         weapon.taken = true;

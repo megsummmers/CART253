@@ -11,13 +11,13 @@ class Door {
     //line order is top, left, bottom, right
     //each line has 2 points
     this.type = "wall";
-    this.boundary = [createVector(x, y), createVector(x + this.w, y), createVector(x, y), createVector(x, y + this.h), createVector(x, y + this.h), createVector(x + this.w, y + this.h),  createVector(x + this.w, y), createVector(x + this.w, y + this.h)];
+    this.boundary = [createVector(x, y), createVector(x + w, y), createVector(x, y), createVector(x, y + h), createVector(x, y + h), createVector(x + w, y + h),  createVector(x + w, y), createVector(x + w, y + h)];
   }
 
   display(){
     push();
     tint(this.color, this.color, this.color, this.alpha);
-    image(imgCoin, this.x, this.y, this.size, this.size);
+    image(this.image, this.x, this.y, this.w, this.h);
     pop();
   }
 }

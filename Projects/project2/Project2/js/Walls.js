@@ -4,10 +4,10 @@ class Wall {
     this.y = y;
     this.w = w;
     this.h = h;
-    this.r = 25;
-    this.g = 25;
-    this.b = 25;
-    this.alpha = 200;
+    this.r = 5;
+    this.g = 5;
+    this.b = 5;
+    this.alpha = 255;
     //raycasting
     //line order is top, left, bottom, right
     //each line has 2 points
