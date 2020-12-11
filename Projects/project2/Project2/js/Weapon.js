@@ -22,7 +22,7 @@ class Bow {
     this.type = "obj";
     this.boundary = [createVector(x, y), createVector(x + size, y), createVector(x, y), createVector(x, y + size), createVector(x, y + size), createVector(x + size, y + size),  createVector(x + size, y), createVector(x + size, y + size)];
   }
-
+//----- DISPLAYS THE WEAPON ------
   display(){
     push();
     tint(this.color, this.color, this.color, this.alpha);

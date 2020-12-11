@@ -34,15 +34,18 @@ class Ray {
     if (den == 0) {
       return;
     }
-
+    //calculates point of intersection
     const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
     const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
     if (t > 0 && t < 1 && u > 0) {
+      //checks if the lines intersect
+      //if so, returns the point
       const pt = createVector();
       pt.x = x1 + t * (x2 - x1);
       pt.y = y1 + t * (y2 - y1);
       return pt;
     } else {
+      //no intersection between the two lines
       return;
     }
   }

@@ -26,7 +26,8 @@ class User {
      this.bowRotate = 0;
    }
 
-   //----- MOVE THE USER -----
+   //----- MOVES THE AVATAR -----
+   //based on user input the avatar moves in the specified direction
    move() {
      if (keyIsDown(LEFT_ARROW) && !this.hitRight) {
      this.vx = -this.speed;
@@ -34,6 +35,7 @@ class User {
      this.alphaL = 255;
      this.alphaR = 0;
      this.moved = true;
+     //changes bow rotation as well
      this.bowRotate = 0;
    }
    else if (keyIsDown(RIGHT_ARROW) && !this.hitLeft) {
@@ -42,21 +44,20 @@ class User {
      this.alphaR = 255;
      this.alphaL = 0;
      this.moved = true;
+     //changes bow rotation as well
      this.bowRotate = 180;
    }
    else {
      this.vx = 0;
    }
-
+   //Up and down movements
    if (keyIsDown(UP_ARROW) && !this.hitBottom) {
      this.vy = -this.speed;
      this.moved = true;
-     this.bowRotate = 90;
    }
    else if (keyIsDown(DOWN_ARROW) && !this.hitTop) {
      this.vy = this.speed;
      this.moved = true;
-     this.bowRotate = 270;
    }
    else {
      this.vy = 0;
@@ -68,9 +69,9 @@ class User {
    this.x = constrain(this.x, 5, width - 40);
    this.y = constrain(this.y, 5, height - 40);
    }
-
+   //----- DISPLAYS THE USER/AVATAR -----
    display() {
-     //----- USER SETUP -----
+     //chosen in the avatar state (after title)
      if (this.avatar === "guy"){
        push();
        tint(255, 255, 255, user.alphaL);
@@ -120,6 +121,7 @@ class User {
   }
 
   coinProximity(coin){
+    //if the user gets close to the coins it will dissapear
     if(!coin.taken){
       let cD = dist(this.x + this.w/2, this.y + this.h/2, coin.x + coin.size/2, coin.y + coin.size/2);
       if (cD <= 40){
@@ -136,26 +138,22 @@ class User {
     //this is due to the images not being centered for raycasting
     let sD = dist(this.x + this.w/2, this.y + this.h/2, spider.x + spider.size/2, spider.y + spider.size/2);
     if (sD <= 50 && !spider.killed){
-      //spider.alpha = 0;
+      //returns 6 to confirm user is dead
       return 6;
-    } else if (sD > 200 && !spider.killed) {
-      // spider.alpha -= 20;
-      // spider.alpha = constrain(spider.alpha, 0, 255);
+    } else {
+      // returns 0 to confirm the user is still alive
       return 0;
-    } else if (sD < 200 && !spider.killed) {
-      // spider.alpha += 20;
-      // spider.alpha = constrain(spider.alpha, 0, 255);
     }
   }
 
   weaponProximity(weapon){
+    //if the user gets close to the weapon it dissapears
+    //the user can then shoot arrows
     if(!weapon.taken){
       let wD = dist(this.x + this.w/2, this.y + this.h/2, weapon.x + weapon.size/2, weapon.y + weapon.size/2);
       if (wD <= 50){
         weapon.alpha = 0;
         weapon.taken = true;
-      } else if (wD > 300) {
-        return 0;
       }
     }
   }
