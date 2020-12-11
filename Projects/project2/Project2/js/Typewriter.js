@@ -1,3 +1,6 @@
+//class to create the typewriter effect in the cutscenes
+//code by Pippin Barr :D
+//slightly edited by Meg Summers
 class Typewriter {
   constructor() {
     // The full text this typewriter is currently typing out (empty to start)
@@ -46,9 +49,9 @@ class Typewriter {
   display() {
     push();
     fill(0);
-    textFont(`Courier`); //change this
-    textSize(18);
-    textAlign(LEFT, CENTER);
+    textFont(`Helvetica`); //change this
+    textSize(30);
+    textAlign(CENTER);
     text(this.displayText, this.x, this.y);
     pop();
   }

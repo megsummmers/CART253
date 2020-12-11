@@ -15,7 +15,7 @@ class Coin {
     this.type = "obj";
     this.boundary = [createVector(x, y), createVector(x + this.size, y), createVector(x, y), createVector(x, y + this.size), createVector(x, y + this.size), createVector(x + this.size, y + this.size),  createVector(x + this.size, y), createVector(x + this.size, y + this.size)];
   }
-
+//----- DISPLAYS THE COINS -----
   display(){
     push();
     tint(this.color, this.color, this.color, this.alpha);

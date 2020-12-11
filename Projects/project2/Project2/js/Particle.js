@@ -1,6 +1,5 @@
 //Center point of RAYCASTING
-//creates rays and goes through all entities to see if they
-//are touched by the rays
+//creates rays and goes through all entities to see if they are touched by the rays
 class Particle {
   constructor() {
     this.pos = createVector(width / 2, height / 2);
