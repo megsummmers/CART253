@@ -1,4 +1,4 @@
-# Template p5 project
+# Artist Statement
 
 Welcome to Dungeon Quest!
 I wanted this game to be a fun but still somewhat challenging game about exploring dungeons and mazes. I personally love maze games so I thought making one for this project would be something I could get excited and passionate about. I was also able to include my other hobby, art, through the cutscenes and prize art.
