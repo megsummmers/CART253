@@ -1,5 +1,6 @@
 //Center point of RAYCASTING
-//creates rays and goes through all entities to see if they are touched by the rays
+//creates rays and goes through all entities to see if they
+//are touched by the rays
 class Particle {
   constructor() {
     this.pos = createVector(width / 2, height / 2);
@@ -8,7 +9,7 @@ class Particle {
       this.rays.push(new Ray(this.pos, radians(a)));
     }
   }
-  
+
   //updates particle's position to user's current position
   update(x, y) {
     this.pos.set(x + 15, y +15);

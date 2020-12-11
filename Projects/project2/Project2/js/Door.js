@@ -13,7 +13,7 @@ class Door {
     this.type = "wall";
     this.boundary = [createVector(x, y), createVector(x + w, y), createVector(x, y), createVector(x, y + h), createVector(x, y + h), createVector(x + w, y + h),  createVector(x + w, y), createVector(x + w, y + h)];
   }
-//----- DISPLAYS THE DOORS -----
+
   display(){
     push();
     tint(this.color, this.color, this.color, this.alpha);

@@ -194,6 +194,7 @@ let level = 1;
 let itemNum = 0;
 let chosen = false;
 let cutsceneNum = 1;
+let cutsceneArea = "middle";
 let textNum = 0;
 //timer variables
 let frameCounter = 0;
@@ -722,6 +723,7 @@ function travelCutscene(){
         tint(255, 255, 255, storyText.avatarAlphaR)
         image(imageThemR, storyText.avatarX, storyText.avatarY);
         pop();
+<<<<<<< HEAD
       }
 
       if(textNum <= 8){
@@ -822,8 +824,10 @@ function travelCutscene(){
         image(imageThemR, storyText.avatarX, storyText.avatarY);
         pop();
       }
+=======
+      }
 
-      if(textNum <= 0 && storyText.avatarX >= 700){
+      if(textNum <= 8){
         //background rectangle for text
         push();
         stroke(0);
@@ -837,7 +841,7 @@ function travelCutscene(){
         textAlign(CENTER);
         textSize(30);
         fill(0);
-        text(storyText.cutscene1_2[textNum], 500, 120);
+        text(storyText.cutscene1[textNum], 500, 120);
         textSize(20);
         fill(100, 100, 100);
         text("hit enter to continue through the dialogue", 500, 175);
@@ -869,10 +873,121 @@ function travelCutscene(){
         storyText.avatarAlphaR = 0;
         storyText.avatarAlphaL = 255;
       }
+
+      if(storyText.avatarX === width){
+        textNum = 0;
+        storyText.avatarX = 50;
+        cutsceneArea = "dungeon";
+      } //fix this
+      if (storyText.avatarX === 1){
+        push();
+        stroke(0);
+        strokeWeight(3);
+        rectMode(CENTER);
+        fill(255, 255, 255, 100);
+        rect(500, 120, 900, 150);
+        pop();
+        //text
+        push();
+        textAlign(CENTER);
+        textSize(30);
+        fill(0);
+        text("I can't go to the shop without some coins", 500, 120);
+        pop();
+      }
+      //DUNGEON PART OF CUTSCENE 1
+    } else if (cutsceneArea === "dungeon"){
+      imageMode(LEFT);
+      //-740 farthest right, 0 farthest left, -370 center
+      image(imgDungeonbg, storyText.dungeonX, storyText.dungeonY);
+      if (user.avatar === "guy"){
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, storyText.avatarAlphaL)
+        image(imageGuyL, storyText.avatarX, storyText.avatarY);
+        tint(255, 255, 255, storyText.avatarAlphaR)
+        image(imageGuyR, storyText.avatarX, storyText.avatarY);
+        pop();
+      } else if (user.avatar === "girl"){
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, storyText.avatarAlphaL)
+        image(imageGirlL, storyText.avatarX, storyText.avatarY);
+        tint(255, 255, 255, storyText.avatarAlphaR)
+        image(imageGirlR, storyText.avatarX, storyText.avatarY);
+        pop();
+      } else if (user.avatar === "non-binary"){
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, storyText.avatarAlphaL)
+        image(imageThemL, storyText.avatarX, storyText.avatarY);
+        tint(255, 255, 255, storyText.avatarAlphaR)
+        image(imageThemR, storyText.avatarX, storyText.avatarY);
+        pop();
+      }
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
+
+      if(textNum <= 0 && storyText.avatarX >= 700){
+        //background rectangle for text
+        push();
+        stroke(0);
+        strokeWeight(3);
+        rectMode(CENTER);
+        fill(255, 255, 255, 100);
+        rect(500, 120, 900, 150);
+        pop();
+        //text
+        push();
+        textAlign(CENTER);
+        textSize(30);
+        fill(0);
+<<<<<<< HEAD
+        text(storyText.cutscene1_2[textNum], 500, 120);
+=======
+        text(storyText.cutscene1[textNum], 500, 120);
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
+        textSize(20);
+        fill(100, 100, 100);
+        text("hit enter to continue through the dialogue", 500, 175);
+        pop();
+      }
+
+      //text with typewriter effect
+      // typewriter.display();
+      // typewriter.typewrite(storyText.cutscene1[textNum], 500, 120);
+
+      if (keyIsDown(RIGHT_ARROW)){
+        if (storyText.middleX <= -740){
+          storyText.avatarX+= 5;
+          storyText.avatarX = constrain(storyText.avatarX, 0, width);
+        } else {
+          storyText.middleX-= 5;
+        }
+        //change avatar facing
+        storyText.avatarAlphaR = 255;
+        storyText.avatarAlphaL = 0;
+      } else if (keyIsDown(LEFT_ARROW)){
+        if (storyText.middleX >= 0){
+          storyText.avatarX-= 5;
+          storyText.avatarX = constrain(storyText.avatarX, 0, width);
+        } else {
+          storyText.middleX+= 5;
+        }
+        //change avatar facing
+        storyText.avatarAlphaR = 0;
+        storyText.avatarAlphaL = 255;
+      }
+<<<<<<< HEAD
       //moves user to 
       if(storyText.avatarX === width){
         cutsceneArea = "dungeon";
       } //prevents user from going backwards
+=======
+
+      if(storyText.avatarX === width){
+        cutsceneArea = "dungeon";
+      } //fix this
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
       if (storyText.avatarX === 1){
         push();
         stroke(0);
@@ -894,8 +1009,11 @@ function travelCutscene(){
 }
 
 //Gameplay function for level one of the dungeon
+<<<<<<< HEAD
 //each level has a similar function that controls
 //all of the entities in the maze
+=======
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
 function level1(){
   //----- GAME TIMER -----
   frameCounter++;
@@ -945,13 +1063,20 @@ function level1(){
   user.display();
   user.move();
 
+<<<<<<< HEAD
 //plays sounds effect when bow is picked up
+=======
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   if(weapon1.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
 
+<<<<<<< HEAD
   //Updates arrows coords while it isn't shot
+=======
+  //while an arrow isn't flying
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   if (arrowHit){
     weapon1.arrowX = user.x;
     weapon1.arrowY = user.y;
@@ -989,6 +1114,7 @@ function level2(){
   //----- RAYCASTING -----
   particle.update(user.x, user.y);
   particle.raycast([...maze2.walls, ...maze2.coins, ...maze2.weapon, ...maze2.doors, ...maze2.spiders]);
+  //particle.raycast(maze1.weapon);
 
   //----- WALL COLLISION SETUP -----
   for(let i = 0; i < maze2.walls.length; i++){
@@ -1027,13 +1153,16 @@ function level2(){
   user.display();
   user.move();
 
-  //plays sound effect when bow is picked up
   if(weapon2.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
 
+<<<<<<< HEAD
   //Updates arrows coords while it isn't shot
+=======
+  //while an arrow isn't flying
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   if (arrowHit){
     weapon2.arrowX = user.x;
     weapon2.arrowY = user.y;
@@ -1102,7 +1231,11 @@ function level3(){
     spider.move();
   }
 
+<<<<<<< HEAD
   //----- WEAPON SETUP AND DISPLAY -----
+=======
+  //----- TBA || WEAPON SETUP AND DISPLAY -----
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   user.weaponProximity(weapon2);
   weapon3.display();
 
@@ -1110,12 +1243,20 @@ function level3(){
   user.display();
   user.move();
 
+<<<<<<< HEAD
   //PLays sound effect when bow is picked up
+=======
+  //bow has yet to be added to the second level
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   if(weapon3.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
+<<<<<<< HEAD
   //Updates arrows coords while it isn't shot
+=======
+  //while an arrow isn't shot
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   if (arrowHit){
     weapon3.arrowX = user.x;
     weapon3.arrowY = user.y;
@@ -1134,7 +1275,7 @@ function level3(){
     user.w = 47;
     user.h = 60;
   }
-  //----- USES EXIT DOOR -----
+  //----- USES EXIT DOOR TO END GAME -----
   if (user.x >= goaldoor3.x && user.y >= goaldoor3.y){
     level = 4;
     user.x = startdoor4.x + 5;
@@ -1184,7 +1325,11 @@ function level4(){
     spider.move();
   }
 
+<<<<<<< HEAD
   //----- WEAPON SETUP AND DISPLAY -----
+=======
+  //----- TBA || WEAPON SETUP AND DISPLAY -----
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   user.weaponProximity(weapon3);
   weapon4.display();
 
@@ -1192,12 +1337,20 @@ function level4(){
   user.display();
   user.move();
 
+<<<<<<< HEAD
   //plauys sound effect when bow is picked up
+=======
+  //bow has yet to be added to the second level
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   if(weapon4.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
+<<<<<<< HEAD
   //Updates arrows coords while it isn't shot
+=======
+  //while an arrow isn't shot
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   if (arrowHit){
     weapon4.arrowX = user.x;
     weapon4.arrowY = user.y;
@@ -1214,7 +1367,7 @@ function level4(){
     user.x = goaldoor3.x - 5;
     user.y = goaldoor3.y - 5;
   }
-  //----- USES EXIT DOOR -----
+  //----- USES EXIT DOOR TO END GAME -----
   if (user.x >= goaldoor4.x - 25 && user.x <= goaldoor4.x + 25 && user.y >= goaldoor4.y){
     level = 5;
     user.x = startdoor5.x + 5;
@@ -1226,7 +1379,7 @@ function level5(){
   //----- GAME TIMER -----
   frameCounter++;
 
-  //----- STARTING DOOR SETUP -----
+  //----- STARTING & EXIT DOOR SETUP -----
   startdoor5.display();
 
   //----- RAYCASTING -----
@@ -1263,7 +1416,11 @@ function level5(){
     spider.move();
   }
 
+<<<<<<< HEAD
   //----- WEAPON SETUP AND DISPLAY -----
+=======
+  //----- TBA || WEAPON SETUP AND DISPLAY -----
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   user.weaponProximity(weapon5);
   weapon5.display();
 
@@ -1271,12 +1428,20 @@ function level5(){
   user.display();
   user.move();
 
+<<<<<<< HEAD
   //plays sound effect when bow is piacked up
+=======
+  //bow has yet to be added to the second level
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   if(weapon5.taken && !bowPlay){
     bowPickup.play();
     bowPlay = true;
   }
+<<<<<<< HEAD
   //Updates arrows coords while it isn't shot
+=======
+  //while an arrow isn't shot
+>>>>>>> parent of 9d6d0b6... P2: Finalized cutscenes + cleaned up code
   if (arrowHit){
     weapon5.arrowX = user.x;
     weapon5.arrowY = user.y;
@@ -1286,12 +1451,21 @@ function level5(){
     shoot(weapon5);
     keyCode = 34;
   }
+  //525, 25, 38, 60 max y 100
   //----- USES START DOOR TO RETURN TO LAST LEVEL -----
   if (user.x <= startdoor5.x +50 && user.x >= startdoor5.x -25 && user.y <= startdoor5.y){
     level = 4;
     user.x = goaldoor4.x - 5;
     user.y = goaldoor4.y - 5;
   }
+  // //----- USES EXIT DOOR TO END GAME -----
+  // if (user.x >= goaldoor5.x - 25 && user.x <= goaldoor5.x + 25 && user.y >= goaldoor5.y){
+  //   if(coinCount >= 5){
+  //     state = 'shop';
+  //   } else {
+  //     state = 'ending';
+  //   }
+  // }
 }
 
 function shop(){
